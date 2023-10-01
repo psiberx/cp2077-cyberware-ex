@@ -30,6 +30,9 @@ public abstract class CyberwareConfig {
             new ExtraSlot(gamedataNewPerkType.Tech_Central_Milestone_3, 1),
             new ExtraSlot(gamedataNewPerkType.Tech_Central_Perk_3_3, 1)
         ]),
+        new ExpansionArea(gamedataEquipmentArea.HandsCW, [
+            new ExtraSlot(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)
+        ]),
         new ExpansionArea(gamedataEquipmentArea.LegsCW, [
             new ExtraSlot(gamedataNewPerkType.Reflexes_Central_Perk_1_3, 1)
         ])

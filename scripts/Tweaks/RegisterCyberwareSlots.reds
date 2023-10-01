@@ -3,6 +3,10 @@ module CyberwareEx
 class RegisterCyberwareSlots extends ScriptableTweak {
     protected func OnApply() {
         for expansion in CyberwareConfig.Expansions() {
+            if IsOverrideMode() {
+                return;
+            }
+
             let equipmentAreaID = TDBID.Create("EquipmentArea." + ToString(expansion.equipmentArea));
             let equipmentAreaSlots = TweakDBInterface.GetForeignKeyArray(equipmentAreaID + t".equipSlots");
 

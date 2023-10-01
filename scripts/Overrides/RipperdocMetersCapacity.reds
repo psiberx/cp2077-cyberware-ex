@@ -1,9 +1,13 @@
+import CyberwareEx.*
+
 @wrapMethod(RipperdocMetersCapacity)
 protected cb func OnInitialize() -> Bool {
     wrappedMethod();
 
-    let margin = this.GetRootWidget().GetMargin();
-    margin.left = 240;
+    if IsExtendedMode() || IsOverrideMode() {
+        let margin = this.GetRootWidget().GetMargin();
+        margin.left = 240;
 
-    this.GetRootWidget().SetMargin(margin);
+        this.GetRootWidget().SetMargin(margin);
+    }
 }

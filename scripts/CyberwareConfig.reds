@@ -11,7 +11,14 @@ public struct ExtraSlot {
 }
 
 public abstract class CyberwareConfig {
-    public static func Expansions() -> array<ExpansionArea> = [
+    public static func BasicExpansions() -> array<ExpansionArea> = [
+        new ExpansionArea(gamedataEquipmentArea.SystemReplacementCW, [
+            new ExtraSlot(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
+            new ExtraSlot(gamedataNewPerkType.Tech_Master_Perk_3, 1)
+        ])
+    ];
+
+    public static func FullExpansions() -> array<ExpansionArea> = [
         new ExpansionArea(gamedataEquipmentArea.SystemReplacementCW, [
             new ExtraSlot(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
             new ExtraSlot(gamedataNewPerkType.Tech_Master_Perk_3, 1)
@@ -37,4 +44,8 @@ public abstract class CyberwareConfig {
             new ExtraSlot(gamedataNewPerkType.Reflexes_Central_Perk_1_3, 1)
         ])
     ];
+
+    public static func Expansions() -> array<ExpansionArea> = IsExtendedMode()
+        ? CyberwareConfig.FullExpansions()
+        : CyberwareConfig.BasicExpansions()
 }

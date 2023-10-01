@@ -14,14 +14,13 @@ protected final const func EnterCondition(const stateContext: ref<StateContext>,
 			timeSystem.UnsetTimeDilation(TimeDilationHelper.GetFocusModeKey(), easeOutCurve);
 
 			if applyTimeDilationToPlayer {
+                timeSystem.UnsetTimeDilationOnLocalPlayerZero(TimeDilationHelper.GetFocusModeKey(), easeOutCurve);
+
 				if this.IsTimeDilationActive(stateContext, scriptInterface, TimeDilationHelper.GetSandevistanKey()) {
 					timeSystem.SetTimeDilationOnLocalPlayerZero(TimeDilationHelper.GetSandevistanKey(), 1.0, 999.0, n"", n"");
-				} else {
-					timeSystem.UnsetTimeDilationOnLocalPlayerZero(easeOutCurve);
 				}
 			}
 		}
-
 		return false;
 	}
 

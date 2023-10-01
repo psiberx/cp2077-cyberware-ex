@@ -84,6 +84,10 @@ private func UnequipTaggedItems(equipArea: gamedataEquipmentArea, requiredTag: C
 @if(ModuleExists("CyberwareEx.OverrideMode"))
 @wrapMethod(EquipmentSystemPlayerData)
 private final const func IsSlotLocked(slot: SEquipSlot, out visibleWhenLocked: Bool) -> Bool {
+    if !slot.visibleWhenLocked {
+        return wrappedMethod(slot, visibleWhenLocked);
+    }
+
     visibleWhenLocked = true;
     return false;
 }

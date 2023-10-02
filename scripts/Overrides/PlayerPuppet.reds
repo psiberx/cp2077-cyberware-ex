@@ -3,16 +3,15 @@ private final func ActivateIconicCyberware() {
     let activated = false;
 
     if this.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision) == 1 {
-        if QuickHackableHelper.TryToCycleOverclockedState(this) {
-            activated = true;
-        }
         return;
     }
 
 	let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
 	let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
+	let hasBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
+	let hasSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
 
-    if statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk) {
+    if hasBerserk {
         let playerData = EquipmentSystem.GetData(this);
         let cyberwareItem = playerData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
         if ItemActionsHelper.UseItem(this, cyberwareItem) {
@@ -20,7 +19,7 @@ private final func ActivateIconicCyberware() {
         }
     }
 
-    if statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan) {
+    if hasSandevistan {
         if TimeDilationHelper.CanUseTimeDilation(this) {
             let playerData = EquipmentSystem.GetData(this);
             let cyberwareItem = playerData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
@@ -29,6 +28,12 @@ private final func ActivateIconicCyberware() {
             }
         }
     }
+
+    //if !hasSandevistan && !hasBerserk {
+        if QuickHackableHelper.TryToCycleOverclockedState(this) {
+            activated = true;
+        }
+    //}
 
     if activated {
         this.IconicCyberwareActivated();

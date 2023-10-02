@@ -69,7 +69,7 @@ private final func GetRequiredPerk(hoverArea: RipperdocHoverState) -> gamedataNe
 
 @if(!ModuleExists("CyberwareEx.OverrideMode"))
 @replaceMethod(RipperDocGameController)
-private final func OpenPerkTree() -> Void {
+private final func OpenPerkTree() {
     let userData = new PerkUserData();
     userData.cyberwareScreenType = this.m_screen;
     userData.statType = CyberwareHelper.GetRequiredPerkStatType(

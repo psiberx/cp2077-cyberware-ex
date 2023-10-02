@@ -2,50 +2,77 @@ module CyberwareEx
 
 public struct ExpansionArea {
     public let equipmentArea: gamedataEquipmentArea;
-    public let extraSlots: array<ExtraSlot>;
+    public let extraSlots: array<ExpansionSlot>;
+
+    public static func Create(equipmentArea: gamedataEquipmentArea, extraSlots: array<ExpansionSlot>) -> ExpansionArea =
+        new ExpansionArea(equipmentArea, extraSlots)
 }
 
-public struct ExtraSlot {
+public struct ExpansionSlot {
     public let requiredPerk: gamedataNewPerkType;
     public let requiredLevel: Int32;
+
+    public static func Create(requiredPerk: gamedataNewPerkType, requiredLevel: Int32) -> ExpansionSlot =
+        new ExpansionSlot(requiredPerk, requiredLevel)
+}
+
+public struct AttachmentSlot {
+    public let slotID: TweakDBID;
+    public let slotName: CName;
+    public let cyberwareType: CName;
+
+    public static func Create(slotName: CName, cyberwareType: CName) -> AttachmentSlot =
+        new AttachmentSlot(TDBID.Create(NameToString(slotName)), slotName, cyberwareType)
 }
 
 public abstract class CyberwareConfig {
+    public static func Expansions() -> array<ExpansionArea> = IsExtendedMode()
+        ? CyberwareConfig.FullExpansions()
+        : CyberwareConfig.BasicExpansions()
+
     public static func BasicExpansions() -> array<ExpansionArea> = [
-        new ExpansionArea(gamedataEquipmentArea.SystemReplacementCW, [
-            new ExtraSlot(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
-            new ExtraSlot(gamedataNewPerkType.Tech_Master_Perk_3, 1)
+        ExpansionArea.Create(gamedataEquipmentArea.SystemReplacementCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Master_Perk_3, 1)
         ])
     ];
 
     public static func FullExpansions() -> array<ExpansionArea> = [
-        new ExpansionArea(gamedataEquipmentArea.SystemReplacementCW, [
-            new ExtraSlot(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
-            new ExtraSlot(gamedataNewPerkType.Tech_Master_Perk_3, 1)
+        ExpansionArea.Create(gamedataEquipmentArea.SystemReplacementCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Master_Perk_3, 1)
         ]),
-        new ExpansionArea(gamedataEquipmentArea.FrontalCortexCW, [
-            new ExtraSlot(gamedataNewPerkType.Intelligence_Central_Milestone_3, 1),
-            new ExtraSlot(gamedataNewPerkType.Intelligence_Central_Milestone_3, 2)
+        ExpansionArea.Create(gamedataEquipmentArea.FrontalCortexCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Intelligence_Central_Milestone_3, 1),
+            ExpansionSlot.Create(gamedataNewPerkType.Intelligence_Central_Milestone_3, 2)
         ]),
-        new ExpansionArea(gamedataEquipmentArea.CardiovascularSystemCW, [
-            new ExtraSlot(gamedataNewPerkType.Body_Central_Perk_1_4, 1)
+        ExpansionArea.Create(gamedataEquipmentArea.CardiovascularSystemCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Body_Central_Perk_1_4, 1)
         ]),
-        new ExpansionArea(gamedataEquipmentArea.NervousSystemCW, [
-            new ExtraSlot(gamedataNewPerkType.Tech_Central_Milestone_3, 2)
+        ExpansionArea.Create(gamedataEquipmentArea.NervousSystemCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 2)
         ]),
-        new ExpansionArea(gamedataEquipmentArea.IntegumentarySystemCW, [
-            new ExtraSlot(gamedataNewPerkType.Tech_Central_Milestone_3, 1),
-            new ExtraSlot(gamedataNewPerkType.Tech_Central_Perk_3_3, 1)
+        ExpansionArea.Create(gamedataEquipmentArea.IntegumentarySystemCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 1),
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_3, 1)
         ]),
-        new ExpansionArea(gamedataEquipmentArea.HandsCW, [
-            new ExtraSlot(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)
+        ExpansionArea.Create(gamedataEquipmentArea.HandsCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)
         ]),
-        new ExpansionArea(gamedataEquipmentArea.LegsCW, [
-            new ExtraSlot(gamedataNewPerkType.Reflexes_Central_Perk_1_3, 1)
+        ExpansionArea.Create(gamedataEquipmentArea.LegsCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Reflexes_Central_Perk_1_3, 1)
         ])
     ];
 
-    public static func Expansions() -> array<ExpansionArea> = IsExtendedMode()
-        ? CyberwareConfig.FullExpansions()
-        : CyberwareConfig.BasicExpansions()
+    public static func Attachments() -> array<AttachmentSlot> = [
+        AttachmentSlot.Create(n"CyberwareSlots.Berserk", n"Berserk"),
+        AttachmentSlot.Create(n"CyberwareSlots.BoostedTendons", n"BoostedTendons"),
+        AttachmentSlot.Create(n"CyberwareSlots.CapacityBooster", n"CapacityBooster"),
+        AttachmentSlot.Create(n"CyberwareSlots.CatPaws", n"CatPaws"),
+        AttachmentSlot.Create(n"CyberwareSlots.JenkinsTendons", n"JenkinsTendons"),
+        AttachmentSlot.Create(n"CyberwareSlots.PowerGrip", n"PowerGrip"),
+        AttachmentSlot.Create(n"CyberwareSlots.ReinforcedMuscles", n"ReinforcedMuscles"),
+        AttachmentSlot.Create(n"CyberwareSlots.Sandevistan", n"Sandevistan"),
+        AttachmentSlot.Create(n"CyberwareSlots.SmartLink", n"SmartLink")
+    ];
 }

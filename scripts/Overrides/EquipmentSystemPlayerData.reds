@@ -9,14 +9,6 @@ public final const func GetActiveItem(equipArea: gamedataEquipmentArea) -> ItemI
 	return wrappedMethod(equipArea);
 }
 
-// Overrides equip method to automatically unequip conflicting items.
-@wrapMethod(EquipmentSystemPlayerData)
-private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) {
-	this.UnequipConflictingItems(itemID);
-
-	wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon);
-}
-
 // Gets the active item that has the specified tag.
 @addMethod(EquipmentSystemPlayerData)
 public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTag: CName) -> ItemID {
@@ -41,44 +33,6 @@ public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTags: array<
 	}
 
 	return ItemID.None();
-}
-
-// Unequips conflicting items.
-// Sandevistan and Berserk are considered to be conflicting items.
-@addMethod(EquipmentSystemPlayerData)
-private func UnequipConflictingItems(itemID: ItemID) {
-	let equipArea = EquipmentSystem.GetEquipAreaType(itemID);
-
-	if Equals(equipArea, gamedataEquipmentArea.SystemReplacementCW) {
-		if this.CheckTagsInItem(itemID, [n"Sandevistan"]) {
-			this.UnequipTaggedItems(equipArea, n"Sandevistan");
-		} else {
-            if this.CheckTagsInItem(itemID, [n"Berserk"]) {
-                this.UnequipTaggedItems(equipArea, n"Berserk");
-            }
-        }
-	}
-}
-
-// Unequips items that has the specified tag.
-@addMethod(EquipmentSystemPlayerData)
-private func UnequipTaggedItems(equipArea: gamedataEquipmentArea, requiredTag: CName) {
-	let requiredTags: array<CName>;
-	ArrayPush(requiredTags, requiredTag);
-
-	let equipAreaIndex = this.GetEquipAreaIndex(equipArea);
-	let numSlots = ArraySize(this.m_equipment.equipAreas[equipAreaIndex].equipSlots);
-	let slotIndex = 0;
-
-	while slotIndex < numSlots {
-		let itemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
-
-		if ItemID.IsValid(itemID) && this.CheckTagsInItem(itemID, requiredTags) {
-			this.UnequipItem(equipAreaIndex, slotIndex);
-		}
-
-		slotIndex += 1;
-	}
 }
 
 @if(ModuleExists("CyberwareEx.OverrideMode"))
@@ -116,4 +70,11 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
         }
         i += 1;
     }
+}
+
+@if(!ModuleExists("CyberwareEx.OverrideMode"))
+@wrapMethod(EquipmentSystemPlayerData)
+private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<EquipSlot_Record>>, out equipSlots: array<SEquipSlot>) {
+    wrappedMethod(slotRecords, equipSlots);
+    ArrayResize(equipSlots, ArraySize(slotRecords));
 }

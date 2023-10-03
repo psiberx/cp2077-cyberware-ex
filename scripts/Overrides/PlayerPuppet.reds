@@ -1,8 +1,13 @@
+import CyberwareEx.*
+
 @replaceMethod(PlayerPuppet)
 private final func ActivateIconicCyberware() {
     let activated = false;
 
     if this.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision) == 1 {
+        if ActivateOverclockInFocusMode() {
+            QuickHackableHelper.TryToCycleOverclockedState(this);
+        }
         return;
     }
 
@@ -29,11 +34,11 @@ private final func ActivateIconicCyberware() {
         }
     }
 
-    //if !hasSandevistan && !hasBerserk {
+    if !ActivateOverclockInFocusMode() /*|| (!hasSandevistan && !hasBerserk)*/ {
         if QuickHackableHelper.TryToCycleOverclockedState(this) {
             activated = true;
         }
-    //}
+    }
 
     if activated {
         this.IconicCyberwareActivated();

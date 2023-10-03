@@ -20,7 +20,7 @@ foreach ($ScriptFile in $SourceFiles) {
     }
     else {
         $Imports = ($Content | Out-String | Select-String -Pattern '(?m)^(\@if.+?$\n?\r?)?import\s+(.+?)$' -AllMatches | %{$_.matches.groups[0].Value.Trim()})
-        $Source = ($Content | Out-String) -replace '(?m)^(\@if.+?$\n?\r?)?(import|module)\s+(.+?)$\n?\r?', ''
+        $Source = ($Content | Select-String -Pattern "^\s*(//)" -NotMatch | Out-String) -replace '(?m)^(\@if.+?$\n?\r?)?(import|module)\s+(.+?)$\n?\r?', ''
     }
 
     if ($Bundles[$Scope] -eq $null) {

@@ -19,8 +19,8 @@ foreach ($ScriptFile in $SourceFiles) {
         $Source = $Content | Out-String
     }
     else {
-        $Imports = ($Content | Select-String -Pattern "^import\s+(.+)" -List | %{$_.matches.groups[1].Value})
-        $Source = ($Content | Select-String -Pattern "^\s*(//|module\s|import\s)" -NotMatch) | Out-String
+        $Imports = ($Content | Out-String | Select-String -Pattern '(?m)^(\@if.+?$\n?\r?)?import\s+(.+?)$' -AllMatches | %{$_.matches.groups[0].Value.Trim()})
+        $Source = ($Content | Out-String) -replace '(?m)^(\@if.+?$\n?\r?)?(import|module)\s+(.+?)$\n?\r?', ''
     }
 
     if ($Bundles[$Scope] -eq $null) {
@@ -54,7 +54,7 @@ foreach ($Bundle in $Bundles.Values) {
     }
 
     foreach ($Import in $Bundle.Imports.Keys) {
-        Out-File -FilePath ${BundleFile} -Encoding ascii -InputObject "import ${Import}" -Append
+        Out-File -FilePath ${BundleFile} -Encoding ascii -InputObject ${Import} -Append
     }
 
     foreach ($Source in $Bundle.Sources) {

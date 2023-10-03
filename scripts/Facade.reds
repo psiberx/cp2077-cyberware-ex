@@ -14,8 +14,8 @@ public abstract class CyberwareEx {
         let player = GetPlayer(game);
         let overrideManager = new OverrideManager();
 	    overrideManager.Initialize(EquipmentSystem.GetData(player));
-        for slot in OverrideConfig.Overrides() {
-            overrideManager.ResetSlot(slot.areaType, true);
+        for override in OverrideConfig.SlotOverrides() {
+            overrideManager.ResetSlot(override.areaType, true);
         }
     }
 
@@ -39,8 +39,8 @@ public abstract class CyberwareEx {
             let player = GetPlayer(game);
             let overrideManager = new OverrideManager();
             overrideManager.Initialize(EquipmentSystem.GetData(player));
-            for slot in OverrideConfig.Overrides() {
-                while (overrideManager.UpgradeSlot(slot.areaType, true)) {}
+            for override in OverrideConfig.SlotOverrides() {
+                while (overrideManager.UpgradeSlot(override.areaType, true)) {}
             }
         }
     }

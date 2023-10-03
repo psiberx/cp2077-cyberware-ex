@@ -2,7 +2,7 @@ module CyberwareEx
 
 class RegisterCyberwareSlots extends ScriptableTweak {
     protected func OnApply() {
-        for expansion in CyberwareConfig.Expansions() {
+        for expansion in CyberwareConfig.SlotExpansions() {
             if IsOverrideMode() {
                 return;
             }

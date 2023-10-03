@@ -26,18 +26,20 @@ public struct AttachmentSlot {
 }
 
 public abstract class CyberwareConfig {
-    public static func Expansions() -> array<ExpansionArea> = IsExtendedMode()
-        ? CyberwareConfig.FullExpansions()
-        : CyberwareConfig.BasicExpansions()
+    public static func SlotExpansions() -> array<ExpansionArea> =
+        IsCustomMode()
+            ? GetCustomSlotExpansions()
+            : IsExtendedMode()
+                ? CyberwareConfig.ExtendedSlotExpansions()
+                : CyberwareConfig.DefaultSlotExpansions()
 
-    public static func BasicExpansions() -> array<ExpansionArea> = [
+    public static func DefaultSlotExpansions() -> array<ExpansionArea> = [
         ExpansionArea.Create(gamedataEquipmentArea.SystemReplacementCW, [
-            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
-            ExpansionSlot.Create(gamedataNewPerkType.Tech_Master_Perk_3, 1)
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 3)
         ])
     ];
 
-    public static func FullExpansions() -> array<ExpansionArea> = [
+    public static func ExtendedSlotExpansions() -> array<ExpansionArea> = [
         ExpansionArea.Create(gamedataEquipmentArea.SystemReplacementCW, [
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 3),
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Master_Perk_3, 1)

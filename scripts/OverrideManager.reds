@@ -17,10 +17,10 @@ public class OverrideManager {
 	
 	public func Initialize(playerData: ref<EquipmentSystemPlayerData>) {
 		this.m_playerData = playerData;
-		this.m_overrides = OverrideConfig.Overrides();
-		for slot in this.m_overrides {
-			let areaRecord = this.m_playerData.GetEquipAreaRecordByType(slot.areaType);
-			slot.defaultSlots = areaRecord.GetEquipSlotsCount();
+		this.m_overrides = OverrideConfig.SlotOverrides();
+		for override in this.m_overrides {
+			let areaRecord = this.m_playerData.GetEquipAreaRecordByType(override.areaType);
+			override.defaultSlots = areaRecord.GetEquipSlotsCount();
 		}
 	}
 	

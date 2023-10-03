@@ -4,7 +4,7 @@ import CyberwareEx.*
 protected cb func OnInitialize() -> Bool {
     wrappedMethod();
 
-    if IsExtendedMode() || IsOverrideMode() {
+    if IsExtendedMode() || IsOverrideMode() || IsCustomMode() {
         let margin = this.GetRootWidget().GetMargin();
         margin.right = 370;
 

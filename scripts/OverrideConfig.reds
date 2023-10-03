@@ -7,22 +7,40 @@ public struct OverrideArea {
 
     public static func None() -> OverrideArea = new OverrideArea(gamedataEquipmentArea.Invalid, 0, 0)
     public static func IsValid(slot: OverrideArea) -> Bool = NotEquals(slot.areaType, gamedataEquipmentArea.Invalid)
+    
+    public static func Create(areaType: gamedataEquipmentArea, maxSlots: Int32) -> OverrideArea =
+        new OverrideArea(areaType, 0, maxSlots)
 }
 
 public abstract class OverrideConfig {
-    public static func Overrides() -> array<OverrideArea> = [
-        new OverrideArea(gamedataEquipmentArea.ArmsCW, 1, 4),
-        new OverrideArea(gamedataEquipmentArea.CardiovascularSystemCW, 3, 6),
-        new OverrideArea(gamedataEquipmentArea.FrontalCortexCW, 3, 6),
-        new OverrideArea(gamedataEquipmentArea.HandsCW, 2, 4),
-        //new OverrideArea(gamedataEquipmentArea.ImmuneSystemCW, 2, 6),
-        new OverrideArea(gamedataEquipmentArea.IntegumentarySystemCW, 3, 6),
-        new OverrideArea(gamedataEquipmentArea.LegsCW, 1, 4),
-        new OverrideArea(gamedataEquipmentArea.MusculoskeletalSystemCW, 3, 6),
-        new OverrideArea(gamedataEquipmentArea.NervousSystemCW, 3, 6),
-        new OverrideArea(gamedataEquipmentArea.SystemReplacementCW, 1, 4)
+    public static func SlotOverrides() -> array<OverrideArea> =
+        IsCustomMode()
+            ? GetCustomSlotOverrides()
+            : OverrideConfig.DefaultSlotOverrides()
+
+    public static func UpgradePrice() -> Int32 =
+        IsCustomMode()
+            ? GetCustomUpgradePrice()
+            : OverrideConfig.DefaultUpgradePrice()
+
+    public static func ResetPrice() -> Int32 =
+        IsCustomMode()
+            ? GetCustomResetPrice()
+            : OverrideConfig.DefaultResetPrice()
+
+    public static func DefaultSlotOverrides() -> array<OverrideArea> = [
+        OverrideArea.Create(gamedataEquipmentArea.ArmsCW, 1),
+        OverrideArea.Create(gamedataEquipmentArea.CardiovascularSystemCW, 6),
+        OverrideArea.Create(gamedataEquipmentArea.FrontalCortexCW, 6),
+        OverrideArea.Create(gamedataEquipmentArea.HandsCW, 4),
+        //OverrideArea.Create(gamedataEquipmentArea.ImmuneSystemCW, 6),
+        OverrideArea.Create(gamedataEquipmentArea.IntegumentarySystemCW, 6),
+        OverrideArea.Create(gamedataEquipmentArea.LegsCW, 4),
+        OverrideArea.Create(gamedataEquipmentArea.MusculoskeletalSystemCW, 6),
+        OverrideArea.Create(gamedataEquipmentArea.NervousSystemCW, 6),
+        OverrideArea.Create(gamedataEquipmentArea.SystemReplacementCW, 4)
     ];
 
-    public static func UpgradePrice() -> Int32 = 10000
-    public static func ResetPrice() -> Int32 = 5000
+     public static func DefaultUpgradePrice() -> Int32 = 10000
+     public static func DefaultResetPrice() -> Int32 = 5000
 }

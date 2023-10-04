@@ -2,6 +2,9 @@ module CyberwareEx.Customization
 import CyberwareEx.*
 
 public class UserConfig extends DefaultConfig {
+    public static func UpgradePrice() -> Int32 = 10000
+    public static func ResetPrice() -> Int32 = 5000
+
     public static func SlotOverrides() -> array<OverrideArea> = [
         OverrideArea.Create(gamedataEquipmentArea.ArmsCW, 1),
         OverrideArea.Create(gamedataEquipmentArea.CardiovascularSystemCW, 6),
@@ -14,6 +17,5 @@ public class UserConfig extends DefaultConfig {
         OverrideArea.Create(gamedataEquipmentArea.SystemReplacementCW, 4)
     ];
 
-    public static func UpgradePrice() -> Int32 = 10000
-    public static func ResetPrice() -> Int32 = 5000
+    public static func ActivateOverclockInFocusMode() -> Bool = false
 }

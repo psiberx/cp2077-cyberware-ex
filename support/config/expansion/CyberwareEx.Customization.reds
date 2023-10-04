@@ -28,4 +28,6 @@ public class UserConfig extends DefaultConfig {
             ExpansionSlot.Create(gamedataNewPerkType.Reflexes_Central_Perk_1_3, 1)
         ])
     ];
+
+    public static func ActivateOverclockInFocusMode() -> Bool = false
 }

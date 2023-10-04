@@ -2,8 +2,6 @@ import CyberwareEx.*
 
 @replaceMethod(PlayerPuppet)
 private final func ActivateIconicCyberware() {
-    let activated = false;
-
     if this.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision) == 1 {
         if ActivateOverclockInFocusMode() {
             QuickHackableHelper.TryToCycleOverclockedState(this);
@@ -15,6 +13,14 @@ private final func ActivateIconicCyberware() {
 	let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
 	let hasBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
 	let hasSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
+	let hasOverclock = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasCyberdeck)
+	    && PlayerDevelopmentSystem.GetData(this).IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
+
+	if !hasBerserk && !hasSandevistan && !hasOverclock {
+	    return;
+	}
+
+    let activated = false;
 
     if hasBerserk {
         let playerData = EquipmentSystem.GetData(this);

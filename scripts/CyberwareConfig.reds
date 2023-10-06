@@ -29,11 +29,14 @@ public abstract class CyberwareConfig {
     public static func SlotExpansions() -> array<ExpansionArea> =
         IsCustomMode()
             ? GetCustomSlotExpansions()
-            : IsExtendedMode()
-                ? CyberwareConfig.ExtendedSlotExpansions()
-                : CyberwareConfig.DefaultSlotExpansions()
+            : CyberwareConfig.DefaultSlotExpansions()
 
-    public static func DefaultSlotExpansions() -> array<ExpansionArea> = [
+    public static func DefaultSlotExpansions() -> array<ExpansionArea> =
+        IsExtendedMode()
+                ? CyberwareConfig.ExtendedSlotExpansions()
+                : CyberwareConfig.BasicSlotExpansions()
+
+    public static func BasicSlotExpansions() -> array<ExpansionArea> = [
         ExpansionArea.Create(gamedataEquipmentArea.SystemReplacementCW, [
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 3)
         ])
@@ -57,6 +60,9 @@ public abstract class CyberwareConfig {
         ExpansionArea.Create(gamedataEquipmentArea.IntegumentarySystemCW, [
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 1),
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_3, 1)
+        ]),
+        ExpansionArea.Create(gamedataEquipmentArea.ArmsCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)
         ]),
         ExpansionArea.Create(gamedataEquipmentArea.HandsCW, [
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)

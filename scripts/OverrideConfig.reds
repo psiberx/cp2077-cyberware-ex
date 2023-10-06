@@ -29,7 +29,7 @@ public abstract class OverrideConfig {
             : OverrideConfig.DefaultResetPrice()
 
     public static func DefaultSlotOverrides() -> array<OverrideArea> = [
-        OverrideArea.Create(gamedataEquipmentArea.ArmsCW, 1),
+        OverrideArea.Create(gamedataEquipmentArea.ArmsCW, 2),
         OverrideArea.Create(gamedataEquipmentArea.CardiovascularSystemCW, 6),
         //OverrideArea.Create(gamedataEquipmentArea.EyesCW, 4),
         OverrideArea.Create(gamedataEquipmentArea.FrontalCortexCW, 6),

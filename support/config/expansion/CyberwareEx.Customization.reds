@@ -21,6 +21,9 @@ public class UserConfig extends DefaultConfig {
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Milestone_3, 1),
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_3, 1)
         ]),
+        ExpansionArea.Create(gamedataEquipmentArea.ArmsCW, [
+            ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)
+        ]),
         ExpansionArea.Create(gamedataEquipmentArea.HandsCW, [
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)
         ]),

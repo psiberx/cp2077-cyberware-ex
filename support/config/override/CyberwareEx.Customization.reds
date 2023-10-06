@@ -17,5 +17,5 @@ public class UserConfig extends DefaultConfig {
         OverrideArea.Create(gamedataEquipmentArea.SystemReplacementCW, 4)
     ];
 
-    public static func ActivateOverclockInFocusMode() -> Bool = false
+    public static func CombinedAbilityMode() -> Bool = false
 }

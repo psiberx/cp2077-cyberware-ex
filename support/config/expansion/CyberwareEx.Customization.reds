@@ -29,5 +29,5 @@ public class UserConfig extends DefaultConfig {
         ])
     ];
 
-    public static func ActivateOverclockInFocusMode() -> Bool = false
+    public static func CombinedAbilityMode() -> Bool = false
 }

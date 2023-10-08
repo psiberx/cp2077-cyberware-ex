@@ -58,7 +58,7 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
             let equipSlot: SEquipSlot;
             this.InitializeEquipSlotFromRecord(slotRecords[i], equipSlot);
             if i < numberOfSlots {
-                if !IsDefined(equipSlot.unlockPrereq) || equipSlot.unlockPrereq.IsFulfilled(this.m_owner.GetGame(), this.m_owner) {
+                if !IsDefined(equipSlot.unlockPrereq) || equipSlot.visibleWhenLocked || equipSlot.unlockPrereq.IsFulfilled(this.m_owner.GetGame(), this.m_owner) {
                     equipSlot.itemID = equipSlots[i].itemID;
                 }
                 equipSlots[i] = equipSlot;

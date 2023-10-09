@@ -1,9 +1,9 @@
 [[UNRESOLVED_REF]]
-id = "TWEAKXL_10401"
+id = "TWEAKXL_10402"
 span_starts_with = "TweakXL"
-message = "Install TweakXL 1.4.1 or higher"
+message = "Install TweakXL 1.4.2 or higher"
 
 [[UNRESOLVED_REF]]
-id = "TWEAKXL_10401"
+id = "TWEAKXL_10402"
 span_starts_with = "TweakDBManager"
-message = "Install TweakXL 1.4.1 or higher"
+message = "Install TweakXL 1.4.2 or higher"

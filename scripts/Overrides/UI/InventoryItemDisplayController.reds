@@ -14,7 +14,5 @@ public final func SetPerkRequiredCyberware(area: gamedataEquipmentArea) {
 protected func UpdateLocked() {
     wrappedMethod();
 
-    if !this.m_visibleWhenLocked && this.m_isLocked {
-        this.GetRootWidget().SetVisible(false);
-    }
+    this.GetRootWidget().SetVisible(!this.m_isLocked || this.m_visibleWhenLocked);
 }

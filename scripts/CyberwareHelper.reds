@@ -7,20 +7,25 @@ public class CyberwareHelper {
         return equipArea.GetEquipSlotsItem(slotIndex);
     }
 
-    public static func GetPrereqRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> wref<PlayerIsNewPerkBoughtPrereq_Record> {
+    public static func GetPrereqRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> wref<IPrereq_Record> {
+        let equipSlot = CyberwareHelper.GetSlotRecord(equipArea, slotIndex);
+        return equipSlot.UnlockPrereqRecord();
+    }
+
+    public static func GetPerkPrereqRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> wref<PlayerIsNewPerkBoughtPrereq_Record> {
         let equipSlot = CyberwareHelper.GetSlotRecord(equipArea, slotIndex);
         return equipSlot.UnlockPrereqRecord() as PlayerIsNewPerkBoughtPrereq_Record;
     }
 
     public static func GetRequiredPerkAbility(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> gamedataNewPerkType {
-        let perkPrereq = CyberwareHelper.GetPrereqRecord(equipArea, slotIndex);
+        let perkPrereq = CyberwareHelper.GetPerkPrereqRecord(equipArea, slotIndex);
         return IsDefined(perkPrereq)
             ? IntEnum<gamedataNewPerkType>(Cast<Int32>(EnumValueFromString("gamedataNewPerkType", perkPrereq.PerkType())))
             : gamedataNewPerkType.Invalid;
     }
 
     public static func GetRequiredPerkRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> wref<NewPerk_Record> {
-        let perkPrereq = CyberwareHelper.GetPrereqRecord(equipArea, slotIndex);
+        let perkPrereq = CyberwareHelper.GetPerkPrereqRecord(equipArea, slotIndex);
         if IsDefined(perkPrereq) {
             let perkID = TDBID.Create("NewPerks." + perkPrereq.PerkType());
             return TweakDBInterface.GetNewPerkRecord(perkID);
@@ -33,7 +38,7 @@ public class CyberwareHelper {
         let perkRecord = CyberwareHelper.GetRequiredPerkRecord(equipArea, slotIndex);
         return IsDefined(perkRecord) ? perkRecord.Type() : gamedataNewPerkType.Invalid;
 
-        //let perkPrereq = CyberwareHelper.GetPrereqRecord(equipArea, slotIndex);
+        //let perkPrereq = CyberwareHelper.GetPerkPrereqRecord(equipArea, slotIndex);
         //return IsDefined(perkPrereq)
         //    ? IntEnum<gamedataNewPerkType>(Cast<Int32>(EnumValueFromString("gamedataNewPerkType", perkPrereq.PerkType())))
         //    : gamedataNewPerkType.Invalid;
@@ -45,7 +50,7 @@ public class CyberwareHelper {
     }
 
     public static func GetRequiredPerkLevel(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> Int32 {
-        let perkPrereq = CyberwareHelper.GetPrereqRecord(equipArea, slotIndex);
+        let perkPrereq = CyberwareHelper.GetPerkPrereqRecord(equipArea, slotIndex);
         return IsDefined(perkPrereq) ? perkPrereq.Level() : 0;
     }
 
@@ -55,8 +60,13 @@ public class CyberwareHelper {
     }
 
     public static func IsPerkRequired(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> Bool {
-        let perkPrereq = CyberwareHelper.GetPrereqRecord(equipArea, slotIndex);
+        let perkPrereq = CyberwareHelper.GetPerkPrereqRecord(equipArea, slotIndex);
         return IsDefined(perkPrereq);
+    }
+
+    public static func IsUnlockRequired(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> Bool {
+        let anyPrereq = CyberwareHelper.GetPrereqRecord(equipArea, slotIndex);
+        return IsDefined(anyPrereq);
     }
 
     public static func IsCyberdeckEquipped(owner: ref<GameObject>) -> Bool {

@@ -97,9 +97,9 @@ public final func AssignItemToHotkey(newID: ItemID, hotkey: EHotkey) {
 @if(ModuleExists("CyberwareEx.OverrideMode"))
 @wrapMethod(EquipmentSystemPlayerData)
 private final const func IsSlotLocked(slot: SEquipSlot, out visibleWhenLocked: Bool) -> Bool {
-//    if !slot.visibleWhenLocked {
-//        return wrappedMethod(slot, visibleWhenLocked);
-//    }
+    if !slot.visibleWhenLocked {
+        return wrappedMethod(slot, visibleWhenLocked);
+    }
     visibleWhenLocked = true;
     return false;
 }
@@ -116,9 +116,9 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
             let equipSlot: SEquipSlot;
             this.InitializeEquipSlotFromRecord(slotRecords[i], equipSlot);
             if i < numberOfSlots {
-                //if !IsDefined(equipSlot.unlockPrereq) || equipSlot.visibleWhenLocked || equipSlot.unlockPrereq.IsFulfilled(this.m_owner.GetGame(), this.m_owner) {
-                equipSlot.itemID = equipSlots[i].itemID;
-                //}
+                if !IsDefined(equipSlot.unlockPrereq) || equipSlot.visibleWhenLocked || equipSlot.unlockPrereq.IsFulfilled(this.m_owner.GetGame(), this.m_owner) {
+                    equipSlot.itemID = equipSlots[i].itemID;
+                }
                 equipSlots[i] = equipSlot;
             } else {
                 ArrayPush(equipSlots, equipSlot);

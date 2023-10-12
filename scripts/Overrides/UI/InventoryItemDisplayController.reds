@@ -9,3 +9,12 @@ public final func SetPerkRequiredCyberware(area: gamedataEquipmentArea) {
         inkImageRef.SetTexturePart(this.m_perkIcon, perkRecord.PerkIcon().AtlasPartName());
     }
 }
+
+@wrapMethod(InventoryItemDisplayController)
+protected func UpdateLocked() {
+    wrappedMethod();
+
+    if !this.m_visibleWhenLocked && this.m_isLocked {
+        this.GetRootWidget().SetVisible(false);
+    }
+}

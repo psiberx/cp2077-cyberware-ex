@@ -2,13 +2,26 @@ module CyberwareEx
 
 class RegisterCyberwareSlots extends ScriptableTweak {
     protected func OnApply() {
-        for expansion in CyberwareConfig.SlotExpansions() {
-            if IsOverrideMode() {
-                return;
-            }
+        if IsOverrideMode() {
+            return;
+        }
 
+        for expansion in CyberwareConfig.SlotExpansions() {
             let equipmentAreaID = TDBID.Create("EquipmentArea." + ToString(expansion.equipmentArea));
             let equipmentAreaSlots = TweakDBInterface.GetForeignKeyArray(equipmentAreaID + t".equipSlots");
+            let lastEquipSlotID = ArrayLast(equipmentAreaSlots);
+            let isOpticsSlot = Equals(expansion.equipmentArea, gamedataEquipmentArea.EyesCW);
+
+            let defaultNumSlots = TweakDBInterface.GetIntDefault(equipmentAreaID + t".defaultNumSlots");
+            if defaultNumSlots == 0 {
+                defaultNumSlots = ArraySize(equipmentAreaSlots);
+            } else {
+                ArrayResize(equipmentAreaSlots, defaultNumSlots);
+            }
+
+            if isOpticsSlot {
+                ArrayPop(equipmentAreaSlots);
+            }
 
             for extraSlot in expansion.extraSlots {
                 let equipSlotName = s"EquipmentArea.EquipSlot_\(extraSlot.requiredPerk)_\(extraSlot.requiredLevel)";
@@ -36,6 +49,11 @@ class RegisterCyberwareSlots extends ScriptableTweak {
                 ArrayPush(equipmentAreaSlots, equipSlotID);
             }
 
+            if isOpticsSlot {
+                ArrayPush(equipmentAreaSlots, lastEquipSlotID);
+            }
+
+            TweakDBManager.SetFlat(equipmentAreaID + t".defaultNumSlots", defaultNumSlots);
             TweakDBManager.SetFlat(equipmentAreaID + t".equipSlots", equipmentAreaSlots);
             TweakDBManager.UpdateRecord(equipmentAreaID);
         }

@@ -35,48 +35,26 @@ public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTags: array<
 	return ItemID.None();
 }
 
-@if(ModuleExists("CyberwareEx.OverrideMode"))
 @wrapMethod(EquipmentSystemPlayerData)
-private final const func IsSlotLocked(slot: SEquipSlot, out visibleWhenLocked: Bool) -> Bool {
-    if !slot.visibleWhenLocked {
-        return wrappedMethod(slot, visibleWhenLocked);
-    }
+private final func UnequipItem(equipAreaIndex: Int32, slotIndex: Int32, opt forceRemove: Bool) {
+    wrappedMethod(equipAreaIndex, slotIndex, forceRemove);
 
-    visibleWhenLocked = true;
-    return false;
-}
-
-@if(ModuleExists("CyberwareEx.OverrideMode"))
-@replaceMethod(EquipmentSystemPlayerData)
-private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<EquipSlot_Record>>, out equipSlots: array<SEquipSlot>) {
-    let numberOfRecords = ArraySize(slotRecords);
-    let numberOfSlots = ArraySize(equipSlots);
-    let finalSize = Max(numberOfRecords, numberOfSlots);
-    let i = 0;
-    while i < finalSize {
-        if i < numberOfRecords {
-            let equipSlot: SEquipSlot;
-            this.InitializeEquipSlotFromRecord(slotRecords[i], equipSlot);
-            if i < numberOfSlots {
-                if !IsDefined(equipSlot.unlockPrereq) || equipSlot.visibleWhenLocked || equipSlot.unlockPrereq.IsFulfilled(this.m_owner.GetGame(), this.m_owner) {
-                    equipSlot.itemID = equipSlots[i].itemID;
+    switch this.m_equipment.equipAreas[equipAreaIndex].areaType {
+        case gamedataEquipmentArea.EyesCW:
+        case gamedataEquipmentArea.LegsCW:
+        case gamedataEquipmentArea.SystemReplacementCW:
+            let slotIndex = 0;
+            let numberOfSlots = ArraySize(this.m_equipment.equipAreas[equipAreaIndex].equipSlots);
+            while slotIndex < numberOfSlots {
+                let itemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
+                if ItemID.IsValid(itemID) {
+                    this.RemoveEquipGLPs(itemID);
+                    this.ApplyEquipGLPs(itemID);
                 }
-                equipSlots[i] = equipSlot;
-            } else {
-                ArrayPush(equipSlots, equipSlot);
+                slotIndex += 1;
             }
-        } else {
-            this.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(t"EquipmentArea.SimpleEquipSlot"), equipSlots[i]);
-        }
-        i += 1;
+            break;
     }
-}
-
-@if(!ModuleExists("CyberwareEx.OverrideMode"))
-@wrapMethod(EquipmentSystemPlayerData)
-private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<EquipSlot_Record>>, out equipSlots: array<SEquipSlot>) {
-    wrappedMethod(slotRecords, equipSlots);
-    ArrayResize(equipSlots, ArraySize(slotRecords));
 }
 
 @replaceMethod(EquipmentSystemPlayerData)
@@ -114,4 +92,47 @@ public final func AssignItemToHotkey(newID: ItemID, hotkey: EHotkey) {
     }
 
     this.SyncHotkeyData(hotkey);
+}
+
+@if(ModuleExists("CyberwareEx.OverrideMode"))
+@wrapMethod(EquipmentSystemPlayerData)
+private final const func IsSlotLocked(slot: SEquipSlot, out visibleWhenLocked: Bool) -> Bool {
+//    if !slot.visibleWhenLocked {
+//        return wrappedMethod(slot, visibleWhenLocked);
+//    }
+    visibleWhenLocked = true;
+    return false;
+}
+
+@if(ModuleExists("CyberwareEx.OverrideMode"))
+@replaceMethod(EquipmentSystemPlayerData)
+private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<EquipSlot_Record>>, out equipSlots: array<SEquipSlot>) {
+    let numberOfRecords = ArraySize(slotRecords);
+    let numberOfSlots = ArraySize(equipSlots);
+    let finalSize = Max(numberOfRecords, numberOfSlots);
+    let i = 0;
+    while i < finalSize {
+        if i < numberOfRecords {
+            let equipSlot: SEquipSlot;
+            this.InitializeEquipSlotFromRecord(slotRecords[i], equipSlot);
+            if i < numberOfSlots {
+                //if !IsDefined(equipSlot.unlockPrereq) || equipSlot.visibleWhenLocked || equipSlot.unlockPrereq.IsFulfilled(this.m_owner.GetGame(), this.m_owner) {
+                equipSlot.itemID = equipSlots[i].itemID;
+                //}
+                equipSlots[i] = equipSlot;
+            } else {
+                ArrayPush(equipSlots, equipSlot);
+            }
+        } else {
+            this.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(t"EquipmentArea.SimpleEquipSlot"), equipSlots[i]);
+        }
+        i += 1;
+    }
+}
+
+@if(!ModuleExists("CyberwareEx.OverrideMode"))
+@wrapMethod(EquipmentSystemPlayerData)
+private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<EquipSlot_Record>>, out equipSlots: array<SEquipSlot>) {
+    wrappedMethod(slotRecords, equipSlots);
+    ArrayResize(equipSlots, ArraySize(slotRecords));
 }

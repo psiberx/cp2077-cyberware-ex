@@ -25,6 +25,14 @@ public struct AttachmentSlot {
         new AttachmentSlot(TDBID.Create(NameToString(slotName)), slotName, cyberwareType)
 }
 
+public struct CyberwareRemapping {
+    public let displayName: CName;
+    public let cyberwareType: CName;
+
+    public static func Create(recordID: TweakDBID, cyberwareType: CName) -> CyberwareRemapping =
+        new CyberwareRemapping(TweakDBInterface.GetLocKeyDefault(recordID + t".displayName"), cyberwareType)
+}
+
 public abstract class CyberwareConfig {
     public static func SlotExpansions() -> array<ExpansionArea> =
         IsCustomMode()
@@ -82,5 +90,15 @@ public abstract class CyberwareConfig {
         AttachmentSlot.Create(n"CyberwareSlots.ReinforcedMuscles", n"ReinforcedMuscles"),
         AttachmentSlot.Create(n"CyberwareSlots.Sandevistan", n"Sandevistan"),
         AttachmentSlot.Create(n"CyberwareSlots.SmartLink", n"SmartLink")
+    ];
+
+    public static func Remappings() -> array<CyberwareRemapping> = [
+        CyberwareRemapping.Create(t"Items.AdvancedKiroshiOpticsBareBase", n"KiroshiOpticsBare"),
+        CyberwareRemapping.Create(t"Items.AdvancedKiroshiOpticsSensorBase", n"KiroshiOpticsSensor"),
+        CyberwareRemapping.Create(t"Items.AdvancedKiroshiOpticsHunterBase", n"KiroshiOpticsSensor"),
+        CyberwareRemapping.Create(t"Items.AdvancedKiroshiOpticsWallhackBase", n"KiroshiOpticsSensor"),
+        CyberwareRemapping.Create(t"Items.AdvancedKiroshiOpticsCombinedBase", n"KiroshiOpticsSensor"),
+        CyberwareRemapping.Create(t"Items.AdvancedKiroshiOpticsPiercingBase", n"KiroshiOpticsPiercing"),
+        CyberwareRemapping.Create(t"Items.Iconic_AdvancedKiroshiOpticsBareBase", n"KiroshiOpticsCrit")
     ];
 }

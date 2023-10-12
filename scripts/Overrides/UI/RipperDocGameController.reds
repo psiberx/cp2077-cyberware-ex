@@ -20,6 +20,19 @@ private final func Init() {
     text.Reparent(this.GetRootCompoundWidget());
 }
 
+@wrapMethod(RipperDocGameController)
+protected cb func OnSlotClick(evt: ref<ItemDisplayClickEvent>) -> Bool {
+    if this.m_isActivePanel && IsDefined(evt.uiInventoryItem) && Equals(this.m_hoverArea, gamedataEquipmentArea.EyesCW) {
+        if evt.actionName.IsAction(n"unequip_item") && evt.uiInventoryItem.IsEquipped() {
+            this.m_isInEquipPopup = true;
+            this.UnequipCyberware(evt.uiInventoryItem.GetItemData());
+            return false;
+        }
+    }
+
+    wrappedMethod(evt);
+}
+
 @if(!ModuleExists("CyberwareEx.OverrideMode"))
 @replaceMethod(RipperDocGameController)
 private final func IsEquipmentAreaRequiringPerk(equipmentArea: gamedataEquipmentArea) -> Bool {

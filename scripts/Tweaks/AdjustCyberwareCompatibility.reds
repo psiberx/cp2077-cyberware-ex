@@ -2,23 +2,32 @@ module CyberwareEx
 
 class AdjustCyberwareCompatibility extends ScriptableTweak {
     protected func OnApply() {
-        // Enable different cyberware combination
+        // Enable different cyberware combinations
         let attachmentSlots = CyberwareConfig.Attachments();
+        let cyberwareRemappings = CyberwareConfig.Remappings();
         for record in TweakDBInterface.GetRecords(n"Item_Record") {
             let cyberwareType = TweakDBInterface.GetCNameDefault(record.GetID() + t".cyberwareType");
             let placementSlots = TweakDBInterface.GetForeignKeyArray(record.GetID() + t".placementSlots");
-
-            if NotEquals(cyberwareType, n"") && ArraySize(placementSlots) > 0 {
-                if Equals(cyberwareType, n"IconicJenkinsTendons") {
-                    cyberwareType = n"JenkinsTendons";
-                    TweakDBManager.SetFlat(record.GetID() + t".cyberwareType", cyberwareType);
-                }
-
-                for attachmentSlot in attachmentSlots {
-                    if Equals(cyberwareType, attachmentSlot.cyberwareType) {
-                        TweakDBManager.SetFlat(record.GetID() + t".placementSlots", [attachmentSlot.slotID]);
-                        TweakDBManager.UpdateRecord(record.GetID());
-                        break;
+            if NotEquals(cyberwareType, n"") {
+                if ArraySize(placementSlots) > 0 {
+                    if Equals(cyberwareType, n"IconicJenkinsTendons") {
+                        cyberwareType = n"JenkinsTendons";
+                        TweakDBManager.SetFlat(record.GetID() + t".cyberwareType", cyberwareType);
+                    }
+                    for attachmentSlot in attachmentSlots {
+                        if Equals(cyberwareType, attachmentSlot.cyberwareType) {
+                            TweakDBManager.SetFlat(record.GetID() + t".placementSlots", [attachmentSlot.slotID]);
+                            TweakDBManager.UpdateRecord(record.GetID());
+                            break;
+                        }
+                    }
+                } else {
+                    for cyberwareRemapping in cyberwareRemappings {
+                        let displayName = TweakDBInterface.GetLocKeyDefault(record.GetID() + t".displayName");
+                        if Equals(displayName, cyberwareRemapping.displayName) {
+                            TweakDBManager.SetFlat(record.GetID() + t".cyberwareType", cyberwareRemapping.cyberwareType);
+                            break;
+                        }
                     }
                 }
             }

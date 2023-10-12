@@ -31,10 +31,9 @@ public abstract class OverrideConfig {
     public static func DefaultSlotOverrides() -> array<OverrideArea> = [
         OverrideArea.Create(gamedataEquipmentArea.ArmsCW, 4),
         OverrideArea.Create(gamedataEquipmentArea.CardiovascularSystemCW, 6),
-        //OverrideArea.Create(gamedataEquipmentArea.EyesCW, 4),
+        OverrideArea.Create(gamedataEquipmentArea.EyesCW, 5),
         OverrideArea.Create(gamedataEquipmentArea.FrontalCortexCW, 6),
         OverrideArea.Create(gamedataEquipmentArea.HandsCW, 4),
-        //OverrideArea.Create(gamedataEquipmentArea.ImmuneSystemCW, 6),
         OverrideArea.Create(gamedataEquipmentArea.IntegumentarySystemCW, 6),
         OverrideArea.Create(gamedataEquipmentArea.LegsCW, 4),
         OverrideArea.Create(gamedataEquipmentArea.MusculoskeletalSystemCW, 6),

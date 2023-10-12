@@ -8,6 +8,7 @@ public class UserConfig extends DefaultConfig {
     public static func SlotOverrides() -> array<OverrideArea> = [
         OverrideArea.Create(gamedataEquipmentArea.ArmsCW, 4),
         OverrideArea.Create(gamedataEquipmentArea.CardiovascularSystemCW, 6),
+        OverrideArea.Create(gamedataEquipmentArea.EyesCW, 5),
         OverrideArea.Create(gamedataEquipmentArea.FrontalCortexCW, 6),
         OverrideArea.Create(gamedataEquipmentArea.HandsCW, 4),
         OverrideArea.Create(gamedataEquipmentArea.IntegumentarySystemCW, 6),

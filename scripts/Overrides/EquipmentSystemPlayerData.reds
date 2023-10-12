@@ -78,3 +78,40 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
     wrappedMethod(slotRecords, equipSlots);
     ArrayResize(equipSlots, ArraySize(slotRecords));
 }
+
+@replaceMethod(EquipmentSystemPlayerData)
+public final func AssignItemToHotkey(newID: ItemID, hotkey: EHotkey) {
+    if Equals(hotkey, EHotkey.INVALID) {
+        return;
+    }
+
+    let oldID = this.m_hotkeys[EnumInt(hotkey)].GetItemID();
+    if newID == oldID {
+        if Equals(hotkey, EHotkey.LBRB) {
+            this.SyncHotkeyData(hotkey);
+        }
+        return;
+    }
+
+    let transactionSystem = GameInstance.GetTransactionSystem(this.m_owner.GetGame());
+
+    let oldCategory = RPGManager.GetItemCategory(oldID);
+    if NotEquals(oldCategory, gamedataItemCategory.Cyberware) {
+        transactionSystem.OnItemRemovedFromEquipmentSlot(this.m_owner, oldID);
+    }
+    if Equals(oldCategory, gamedataItemCategory.Consumable) {
+        this.RemoveEquipGLPs(oldID);
+    }
+
+    this.m_hotkeys[EnumInt(hotkey)].StoreItem(newID);
+
+    let newCategory = RPGManager.GetItemCategory(newID);
+    if NotEquals(newCategory, gamedataItemCategory.Cyberware) {
+        transactionSystem.OnItemAddedToEquipmentSlot(this.m_owner, newID);
+    }
+    if Equals(newCategory, gamedataItemCategory.Consumable) {
+        this.ApplyEquipGLPs(newID);
+    }
+
+    this.SyncHotkeyData(hotkey);
+}

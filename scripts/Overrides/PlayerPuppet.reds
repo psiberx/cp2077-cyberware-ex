@@ -2,13 +2,20 @@ import CyberwareEx.*
 
 @replaceMethod(PlayerPuppet)
 private final func ActivateIconicCyberware() {
-	let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
-	let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
+	//let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
+	//let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
+	//let hasBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
+	//let hasSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan); // "SandevistanCooldown"
+	//let hasOverclock = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasCyberdeck)
+	//    && PlayerDevelopmentSystem.GetData(this).IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
 
-	let hasBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
-	let hasSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
-	let hasOverclock = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasCyberdeck)
-	    && PlayerDevelopmentSystem.GetData(this).IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
+    let equipmentData = EquipmentSystem.GetData(this);
+    let characterData = PlayerDevelopmentSystem.GetData(this);
+
+	let hasBerserk = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
+	let hasSandevistan = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
+	let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
+	    && characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
 
     let numberOfAbilities = (hasBerserk ? 1 : 0) + (hasSandevistan ? 1 : 0) + (hasOverclock ? 1 : 0);
 	if numberOfAbilities == 0 {

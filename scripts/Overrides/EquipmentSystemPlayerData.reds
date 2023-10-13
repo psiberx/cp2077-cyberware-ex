@@ -9,13 +9,16 @@ public final const func GetActiveItem(equipArea: gamedataEquipmentArea) -> ItemI
 	return wrappedMethod(equipArea);
 }
 
-// Gets the active item that has the specified tag.
+@addMethod(EquipmentSystemPlayerData)
+public func HasTaggedItem(equipArea: gamedataEquipmentArea, requiredTag: CName) -> Bool {
+	return ItemID.IsValid(this.GetTaggedItem(equipArea, [requiredTag]));
+}
+
 @addMethod(EquipmentSystemPlayerData)
 public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTag: CName) -> ItemID {
 	return this.GetTaggedItem(equipArea, [requiredTag]);
 }
 
-// Gets the active item that has specified tags.
 @addMethod(EquipmentSystemPlayerData)
 public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTags: array<CName>) -> ItemID {
 	let equipAreaIndex = this.GetEquipAreaIndex(equipArea);
@@ -23,10 +26,10 @@ public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTags: array<
     let slotIndex = 0;
 
 	while slotIndex < numSlots {
-		let itemID: ItemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
+		let itemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
 
 		if ItemID.IsValid(itemID) && this.CheckTagsInItem(itemID, requiredTags) {
-			return this.GetItemInEquipSlot(equipAreaIndex, slotIndex);
+			return itemID;
 		}
 
 		slotIndex += 1;

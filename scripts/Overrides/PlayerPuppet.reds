@@ -2,13 +2,6 @@ import CyberwareEx.*
 
 @replaceMethod(PlayerPuppet)
 private final func ActivateIconicCyberware() {
-	//let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
-	//let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
-	//let hasBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
-	//let hasSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan); // "SandevistanCooldown"
-	//let hasOverclock = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasCyberdeck)
-	//    && PlayerDevelopmentSystem.GetData(this).IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
-
     let equipmentData = EquipmentSystem.GetData(this);
     let characterData = PlayerDevelopmentSystem.GetData(this);
 
@@ -24,6 +17,11 @@ private final func ActivateIconicCyberware() {
 
     let isOnlyOneAbility = numberOfAbilities == 1;
     let isCombinedAbilityMode = IsCombinedAbilityMode();
+
+	let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
+	let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
+	let canUseBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
+	let canUseSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
 
     let psmBlackboard = this.GetPlayerStateMachineBlackboard();
     let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
@@ -41,9 +39,8 @@ private final func ActivateIconicCyberware() {
     }
 
     if hasBerserk && (isOnlyOneAbility || (!isFocusMode && (isBlocking || !hasSandevistan)) || isCombinedAbilityMode) {
-        if !isInVehicle {
-            let playerData = EquipmentSystem.GetData(this);
-            let berserkItem = playerData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
+        if canUseBerserk && !isInVehicle {
+            let berserkItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
 
             attempted = true;
             if ItemActionsHelper.UseItem(this, berserkItem) {
@@ -53,9 +50,8 @@ private final func ActivateIconicCyberware() {
     }
 
     if hasSandevistan && (isOnlyOneAbility || (!isFocusMode && (!isBlocking || !hasBerserk)) || isCombinedAbilityMode) {
-        if TimeDilationHelper.CanUseTimeDilation(this) {
-            let playerData = EquipmentSystem.GetData(this);
-            let sandevistanItem = playerData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
+        if canUseSandevistan && TimeDilationHelper.CanUseTimeDilation(this) {
+            let sandevistanItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
 
             attempted = true;
             if ItemActionsHelper.UseItem(this, sandevistanItem) {

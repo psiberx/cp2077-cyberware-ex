@@ -139,3 +139,23 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
     wrappedMethod(slotRecords, equipSlots);
     ArrayResize(equipSlots, ArraySize(slotRecords));
 }
+
+@if(!ModuleExists("CyberarmOverhaul"))
+@replaceMethod(EquipmentSystemPlayerData)
+public final const func GetActiveMeleeWare() -> ItemID {
+    let slotIndex = 0;
+    let equipAreaIndex = this.GetEquipAreaIndex(gamedataEquipmentArea.ArmsCW);
+    let numberOfSlots = ArraySize(this.m_equipment.equipAreas[equipAreaIndex].equipSlots);
+    while slotIndex < numberOfSlots {
+        let itemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
+        if ItemID.IsValid(itemID) {
+            let itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(itemID));
+            if Equals(itemRecord.ItemCategory().Type(), gamedataItemCategory.Weapon)
+                && !itemRecord.TagsContains(n"ProjectileLauncher") {
+                return itemID;
+            }
+        }
+        slotIndex += 1;
+    }
+    return ItemID.None();
+}

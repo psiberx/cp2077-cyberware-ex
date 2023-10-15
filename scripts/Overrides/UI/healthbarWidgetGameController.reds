@@ -4,5 +4,5 @@ import CyberwareEx.*
 // if the memory bar should be displayed under the health bar.
 @replaceMethod(healthbarWidgetGameController)
 protected final const func IsCyberdeckEquipped() -> Bool {
-	return CyberwareHelper.IsCyberdeckEquipped(this.GetPlayerControlledObject());
+    return CyberwareHelper.IsCyberdeckEquipped(this.GetPlayerControlledObject());
 }

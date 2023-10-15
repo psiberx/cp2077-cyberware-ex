@@ -5,23 +5,23 @@ private final func ActivateIconicCyberware() {
     let equipmentData = EquipmentSystem.GetData(this);
     let characterData = PlayerDevelopmentSystem.GetData(this);
 
-	let hasBerserk = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
-	let hasSandevistan = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
-	let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
-	    && characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
+    let hasBerserk = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
+    let hasSandevistan = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
+    let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
+        && characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
 
     let numberOfAbilities = (hasBerserk ? 1 : 0) + (hasSandevistan ? 1 : 0) + (hasOverclock ? 1 : 0);
-	if numberOfAbilities == 0 {
-	    return;
-	}
+    if numberOfAbilities == 0 {
+        return;
+    }
 
     let isOnlyOneAbility = numberOfAbilities == 1;
     let isCombinedAbilityMode = IsCombinedAbilityMode();
 
-	let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
-	let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
-	let canUseBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
-	let canUseSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
+    let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
+    let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
+    let canUseBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
+    let canUseSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
 
     let psmBlackboard = this.GetPlayerStateMachineBlackboard();
     let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
@@ -83,8 +83,8 @@ private final func ActivateIconicCyberware() {
 // Sandevistan + Focus Mode in particular.
 @wrapMethod(PlayerPuppet)
 protected cb func OnCleanUpTimeDilationEvent(evt: ref<CleanUpTimeDilationEvent>) -> Bool {
-	let timeSystem = GameInstance.GetTimeSystem(this.GetGame());
+    let timeSystem = GameInstance.GetTimeSystem(this.GetGame());
     if !timeSystem.IsTimeDilationActive() {
-    	wrappedMethod(evt);
+        wrappedMethod(evt);
     }
 }

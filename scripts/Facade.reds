@@ -6,14 +6,14 @@ public abstract class CyberwareEx {
     public static func ResetSlot(game: GameInstance, areaType: gamedataEquipmentArea) {
         let player = GetPlayer(game);
         let overrideManager = new OverrideManager();
-	    overrideManager.Initialize(EquipmentSystem.GetData(player));
+        overrideManager.Initialize(EquipmentSystem.GetData(player));
         overrideManager.ResetSlot(areaType, true);
     }
 
     public static func ResetAllSlots(game: GameInstance) {
         let player = GetPlayer(game);
         let overrideManager = new OverrideManager();
-	    overrideManager.Initialize(EquipmentSystem.GetData(player));
+        overrideManager.Initialize(EquipmentSystem.GetData(player));
         for override in OverrideConfig.SlotOverrides() {
             overrideManager.ResetSlot(override.areaType, true);
         }

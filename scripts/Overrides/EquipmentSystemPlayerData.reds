@@ -2,40 +2,40 @@
 // it returns a Cyberdeck installed in any slot, not just in the first.
 @wrapMethod(EquipmentSystemPlayerData)
 public final const func GetActiveItem(equipArea: gamedataEquipmentArea) -> ItemID {
-	if Equals(equipArea, gamedataEquipmentArea.SystemReplacementCW) {
-		return this.GetTaggedItem(equipArea, n"Cyberdeck");
-	}
+    if Equals(equipArea, gamedataEquipmentArea.SystemReplacementCW) {
+        return this.GetTaggedItem(equipArea, n"Cyberdeck");
+    }
 
-	return wrappedMethod(equipArea);
+    return wrappedMethod(equipArea);
 }
 
 @addMethod(EquipmentSystemPlayerData)
 public func HasTaggedItem(equipArea: gamedataEquipmentArea, requiredTag: CName) -> Bool {
-	return ItemID.IsValid(this.GetTaggedItem(equipArea, [requiredTag]));
+    return ItemID.IsValid(this.GetTaggedItem(equipArea, [requiredTag]));
 }
 
 @addMethod(EquipmentSystemPlayerData)
 public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTag: CName) -> ItemID {
-	return this.GetTaggedItem(equipArea, [requiredTag]);
+    return this.GetTaggedItem(equipArea, [requiredTag]);
 }
 
 @addMethod(EquipmentSystemPlayerData)
 public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTags: array<CName>) -> ItemID {
-	let equipAreaIndex = this.GetEquipAreaIndex(equipArea);
+    let equipAreaIndex = this.GetEquipAreaIndex(equipArea);
     let numSlots = ArraySize(this.m_equipment.equipAreas[equipAreaIndex].equipSlots);
     let slotIndex = 0;
 
-	while slotIndex < numSlots {
-		let itemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
+    while slotIndex < numSlots {
+        let itemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
 
-		if ItemID.IsValid(itemID) && this.CheckTagsInItem(itemID, requiredTags) {
-			return itemID;
-		}
+        if ItemID.IsValid(itemID) && this.CheckTagsInItem(itemID, requiredTags) {
+            return itemID;
+        }
 
-		slotIndex += 1;
-	}
+        slotIndex += 1;
+    }
 
-	return ItemID.None();
+    return ItemID.None();
 }
 
 @wrapMethod(EquipmentSystemPlayerData)

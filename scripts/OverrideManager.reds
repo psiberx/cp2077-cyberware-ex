@@ -1,123 +1,123 @@
 module CyberwareEx
 
 public class OverrideState {
-	public let areaType: gamedataEquipmentArea;
+    public let areaType: gamedataEquipmentArea;
     public let areaIndex: Int32;
-	public let currentSlots: Int32;
-	public let defaultSlots: Int32;
+    public let currentSlots: Int32;
+    public let defaultSlots: Int32;
     public let maxSlots: Int32;
-	public let isOverridable: Bool;
-	public let canBuyOverride: Bool;
-	public let canBuyReset: Bool;
+    public let isOverridable: Bool;
+    public let canBuyOverride: Bool;
+    public let canBuyReset: Bool;
 }
 
 public class OverrideManager {
-	private let m_overrides: array<OverrideArea>;
-	private let m_playerData: ref<EquipmentSystemPlayerData>;
-	
-	public func Initialize(playerData: ref<EquipmentSystemPlayerData>) {
-		this.m_playerData = playerData;
-		this.m_overrides = OverrideConfig.SlotOverrides();
+    private let m_overrides: array<OverrideArea>;
+    private let m_playerData: ref<EquipmentSystemPlayerData>;
 
-	    let i = 0;
-		while i < ArraySize(this.m_overrides) {
-			let areaRecord = this.m_playerData.GetEquipAreaRecordByType(this.m_overrides[i].areaType);
-			this.m_overrides[i].defaultSlots = areaRecord.GetEquipSlotsCount();
-			i += 1;
-		}
-	}
-	
-	public func GetOverrideState(areaType: gamedataEquipmentArea) -> ref<OverrideState> {
-		let overrideState = new OverrideState();
-		overrideState.areaType = areaType;
-		overrideState.areaIndex = this.GetEquipAreaIndex(areaType);
-		overrideState.currentSlots = this.GetEquipAreaNumberOfSlots(areaType);
-		
-		let overrideArea = this.GetOverrideArea(areaType);
-		if OverrideArea.IsValid(overrideArea) {
-			overrideState.defaultSlots = overrideArea.defaultSlots;
-			overrideState.maxSlots = overrideArea.maxSlots;
-			overrideState.isOverridable = true;
+    public func Initialize(playerData: ref<EquipmentSystemPlayerData>) {
+        this.m_playerData = playerData;
+        this.m_overrides = OverrideConfig.SlotOverrides();
 
-			let playerMoney = GameInstance.GetTransactionSystem(this.m_playerData.m_owner.GetGame())
-				.GetItemQuantity(this.m_playerData.m_owner, MarketSystem.Money());
+        let i = 0;
+        while i < ArraySize(this.m_overrides) {
+            let areaRecord = this.m_playerData.GetEquipAreaRecordByType(this.m_overrides[i].areaType);
+            this.m_overrides[i].defaultSlots = areaRecord.GetEquipSlotsCount();
+            i += 1;
+        }
+    }
 
-			overrideState.canBuyOverride = (playerMoney >= OverrideConfig.UpgradePrice());
-			overrideState.canBuyReset = (playerMoney >= OverrideConfig.ResetPrice());
-		}
+    public func GetOverrideState(areaType: gamedataEquipmentArea) -> ref<OverrideState> {
+        let overrideState = new OverrideState();
+        overrideState.areaType = areaType;
+        overrideState.areaIndex = this.GetEquipAreaIndex(areaType);
+        overrideState.currentSlots = this.GetEquipAreaNumberOfSlots(areaType);
 
-		return overrideState;
-	}
+        let overrideArea = this.GetOverrideArea(areaType);
+        if OverrideArea.IsValid(overrideArea) {
+            overrideState.defaultSlots = overrideArea.defaultSlots;
+            overrideState.maxSlots = overrideArea.maxSlots;
+            overrideState.isOverridable = true;
 
-	public func UpgradeSlot(areaType: gamedataEquipmentArea, opt free: Bool, opt vendor: wref<GameObject>) -> Bool {
-		let overrideState = this.GetOverrideState(areaType);
+            let playerMoney = GameInstance.GetTransactionSystem(this.m_playerData.m_owner.GetGame())
+                .GetItemQuantity(this.m_playerData.m_owner, MarketSystem.Money());
 
-		if !overrideState.isOverridable || overrideState.currentSlots == overrideState.maxSlots {
-			return false;
-		}
+            overrideState.canBuyOverride = (playerMoney >= OverrideConfig.UpgradePrice());
+            overrideState.canBuyReset = (playerMoney >= OverrideConfig.ResetPrice());
+        }
 
-		if !overrideState.canBuyOverride && !free {
-			return false;
-		}
+        return overrideState;
+    }
 
-		ArrayResize(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots, overrideState.currentSlots + 1);
-		this.m_playerData.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(t"EquipmentArea.SimpleEquipSlot"),
-		    this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots[overrideState.currentSlots]);
+    public func UpgradeSlot(areaType: gamedataEquipmentArea, opt free: Bool, opt vendor: wref<GameObject>) -> Bool {
+        let overrideState = this.GetOverrideState(areaType);
 
-		if !free {
-			let transactionSystem = GameInstance.GetTransactionSystem(this.m_playerData.m_owner.GetGame());
-			if IsDefined(vendor) {
-				transactionSystem.TransferItem(this.m_playerData.m_owner, vendor, MarketSystem.Money(), OverrideConfig.UpgradePrice());
-			} else {
-				transactionSystem.RemoveItem(this.m_playerData.m_owner, MarketSystem.Money(), OverrideConfig.UpgradePrice());
-			}
-		}
+        if !overrideState.isOverridable || overrideState.currentSlots == overrideState.maxSlots {
+            return false;
+        }
 
-		return true;
-	}
+        if !overrideState.canBuyOverride && !free {
+            return false;
+        }
 
-	public func ResetSlot(areaType: gamedataEquipmentArea, opt free: Bool, opt vendor: wref<GameObject>) -> Bool {
-		let overrideState = this.GetOverrideState(areaType);
+        ArrayResize(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots, overrideState.currentSlots + 1);
+        this.m_playerData.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(t"EquipmentArea.SimpleEquipSlot"),
+            this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots[overrideState.currentSlots]);
 
-		if !overrideState.isOverridable || overrideState.currentSlots == overrideState.defaultSlots {
-			return false;
-		}
+        if !free {
+            let transactionSystem = GameInstance.GetTransactionSystem(this.m_playerData.m_owner.GetGame());
+            if IsDefined(vendor) {
+                transactionSystem.TransferItem(this.m_playerData.m_owner, vendor, MarketSystem.Money(), OverrideConfig.UpgradePrice());
+            } else {
+                transactionSystem.RemoveItem(this.m_playerData.m_owner, MarketSystem.Money(), OverrideConfig.UpgradePrice());
+            }
+        }
 
-		if !overrideState.canBuyReset && !free {
-			return false;
-		}
+        return true;
+    }
 
-		let slotIndex = overrideState.defaultSlots + 1;
-		while slotIndex <= overrideState.currentSlots {
-			if ItemID.IsValid(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots[slotIndex].itemID) {
-				this.m_playerData.UnequipItem(overrideState.areaIndex, slotIndex);
-			}
-			slotIndex += 1;
-		}
+    public func ResetSlot(areaType: gamedataEquipmentArea, opt free: Bool, opt vendor: wref<GameObject>) -> Bool {
+        let overrideState = this.GetOverrideState(areaType);
 
-		ArrayResize(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots, overrideState.defaultSlots);
+        if !overrideState.isOverridable || overrideState.currentSlots == overrideState.defaultSlots {
+            return false;
+        }
 
-		if !free {
-			let transactionSystem = GameInstance.GetTransactionSystem(this.m_playerData.m_owner.GetGame());
-			if IsDefined(vendor) {
-				transactionSystem.TransferItem(this.m_playerData.m_owner, vendor, MarketSystem.Money(), OverrideConfig.ResetPrice());
-			} else {
-				transactionSystem.RemoveItem(this.m_playerData.m_owner, MarketSystem.Money(), OverrideConfig.ResetPrice());
-			}
-		}
+        if !overrideState.canBuyReset && !free {
+            return false;
+        }
 
-		return true;
-	}
-	
-	private func GetOverrideArea(areaType: gamedataEquipmentArea) -> OverrideArea {
-		for slot in this.m_overrides {
-			if Equals(slot.areaType, areaType) {
-				return slot;
-			}
-		}
+        let slotIndex = overrideState.defaultSlots + 1;
+        while slotIndex <= overrideState.currentSlots {
+            if ItemID.IsValid(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots[slotIndex].itemID) {
+                this.m_playerData.UnequipItem(overrideState.areaIndex, slotIndex);
+            }
+            slotIndex += 1;
+        }
 
-		return OverrideArea.None();
-	}
+        ArrayResize(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots, overrideState.defaultSlots);
+
+        if !free {
+            let transactionSystem = GameInstance.GetTransactionSystem(this.m_playerData.m_owner.GetGame());
+            if IsDefined(vendor) {
+                transactionSystem.TransferItem(this.m_playerData.m_owner, vendor, MarketSystem.Money(), OverrideConfig.ResetPrice());
+            } else {
+                transactionSystem.RemoveItem(this.m_playerData.m_owner, MarketSystem.Money(), OverrideConfig.ResetPrice());
+            }
+        }
+
+        return true;
+    }
+
+    private func GetOverrideArea(areaType: gamedataEquipmentArea) -> OverrideArea {
+        for slot in this.m_overrides {
+            if Equals(slot.areaType, areaType) {
+                return slot;
+            }
+        }
+
+        return OverrideArea.None();
+    }
 
     private func GetEquipAreaIndex(areaType: gamedataEquipmentArea) -> Int32 {
         let i = 0;

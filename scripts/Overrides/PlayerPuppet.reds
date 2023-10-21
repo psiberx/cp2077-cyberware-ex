@@ -1,5 +1,35 @@
 import CyberwareEx.*
 
+@wrapMethod(PlayerPuppet)
+protected cb func OnGameAttached() -> Bool {
+    wrappedMethod();
+
+    if this.IsControlledByLocalPeer() || IsHost() {
+        this.RegisterInputListener(this, n"ToggleSprint");
+    }
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
+    if this.PlayerLastUsedPad() && Equals(ListenerAction.GetName(action), n"ToggleSprint")
+        && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+        let psmBlackboard = this.GetPlayerStateMachineBlackboard();
+        let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
+        if isFocusMode {
+            if QuickHackableHelper.TryToCycleOverclockedState(this) {
+                let dpadAction = new DPADActionPerformed();
+                dpadAction.action = EHotkey.LBRB;
+                dpadAction.state = EUIActionState.COMPLETED;
+                dpadAction.successful = true;
+
+                GameInstance.GetUISystem(this.GetGame()).QueueEvent(dpadAction);
+            }
+        }
+    } else {
+        wrappedMethod(action, consumer);
+    }
+}
+
 @replaceMethod(PlayerPuppet)
 private final func ActivateIconicCyberware() {
     let equipmentData = EquipmentSystem.GetData(this);

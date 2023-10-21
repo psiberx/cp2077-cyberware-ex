@@ -2,7 +2,7 @@
 // even if Sandevistan's time dilation is already active.
 // Allows the player to use Scanner and Quickhacks without canceling Sandevistan effect.
 // Originally the game cancels Sandevistan effect when the player enters Focus Mode.
-@wrapMethod(TimeDilationFocusModeDecisions)
+@replaceMethod(TimeDilationFocusModeDecisions)
 protected final const func EnterCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
     if !this.IsInVisionModeActiveState(stateContext, scriptInterface) {
         if this.IsTimeDilationActive(stateContext, scriptInterface, TimeDilationHelper.GetFocusModeKey()) {

@@ -244,3 +244,9 @@ protected cb func OnSlotResetConfirmed(data: ref<inkGameNotificationData>) -> Bo
 
     this.m_overrideConfirmationToken = null;
 }
+
+@if(ModuleExists("CyberwareEx.OverrideMode"))
+@replaceMethod(RipperDocGameController)
+private final func IsEquipmentAreaRequiringPerk(equipmentArea: gamedataEquipmentArea) -> Bool {
+    return false;
+}

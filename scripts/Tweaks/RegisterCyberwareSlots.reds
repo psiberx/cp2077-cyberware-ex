@@ -2,15 +2,17 @@ module CyberwareEx
 
 class RegisterCyberwareSlots extends ScriptableTweak {
     protected func OnApply() {
+        if !IsDefined(TweakDBInterface.GetRecord(t"EquipmentArea.SkeletonEquipSlot")) {
+            TweakDBManager.CloneRecord(n"EquipmentArea.SkeletonEquipSlot", t"EquipmentArea.SimpleEquipSlot");
+        }
+
         if IsOverrideMode() {
             return;
         }
 
         for expansion in CyberwareConfig.SlotExpansions() {
-            let equipmentAreaID = TDBID.Create("EquipmentArea." + ToString(expansion.equipmentArea));
+            let equipmentAreaID = TDBID.Create(s"EquipmentArea.\(expansion.equipmentArea)");
             let equipmentAreaSlots = TweakDBInterface.GetForeignKeyArray(equipmentAreaID + t".equipSlots");
-            //let lastEquipSlotID = ArrayLast(equipmentAreaSlots);
-            //let isOpticsSlot = Equals(expansion.equipmentArea, gamedataEquipmentArea.EyesCW);
 
             let defaultNumSlots = TweakDBInterface.GetIntDefault(equipmentAreaID + t".defaultNumSlots");
             if defaultNumSlots == 0 {
@@ -19,39 +21,14 @@ class RegisterCyberwareSlots extends ScriptableTweak {
                 ArrayResize(equipmentAreaSlots, defaultNumSlots);
             }
 
-            //if isOpticsSlot {
-            //    ArrayPop(equipmentAreaSlots);
-            //}
-
             for extraSlot in expansion.extraSlots {
-                let equipSlotName = s"EquipmentArea.EquipSlot_\(extraSlot.requiredPerk)_\(extraSlot.requiredLevel)";
-                let equipSlotID = TDBID.Create(equipSlotName);
-
-                if !IsDefined(TweakDBInterface.GetEquipSlotRecord(equipSlotID)) {
-                    let prereqName = s"EquipmentArea.PerkPrereq_\(extraSlot.requiredPerk)_\(extraSlot.requiredLevel)";
-                    let prereqID = TDBID.Create(prereqName);
-
-                    if !IsDefined(TweakDBInterface.GetPrereqRecord(prereqID)) {
-                        TweakDBManager.CreateRecord(prereqID, n"PlayerIsNewPerkBoughtPrereq");
-                        TweakDBManager.SetFlat(prereqID + t".perkType", ToString(extraSlot.requiredPerk));
-                        TweakDBManager.SetFlat(prereqID + t".level", extraSlot.requiredLevel);
-                        TweakDBManager.UpdateRecord(prereqID);
-                        TweakDBManager.RegisterName(StringToName(prereqName));
-                    }
-
-                    TweakDBManager.CreateRecord(equipSlotID, n"EquipSlot");
-                    TweakDBManager.SetFlat(equipSlotID + t".unlockPrereqRecord", prereqID);
-                    TweakDBManager.SetFlat(equipSlotID + t".visibleWhenLocked", true);
-                    TweakDBManager.UpdateRecord(equipSlotID);
-                    TweakDBManager.RegisterName(StringToName(equipSlotName));
-                }
-
-                ArrayPush(equipmentAreaSlots, equipSlotID);
+                ArrayPush(equipmentAreaSlots,
+                    CyberwareHelper.CreateEquipSlotRecord(
+                        expansion.equipmentArea,
+                        ArraySize(equipmentAreaSlots),
+                        extraSlot.requiredPerk,
+                        extraSlot.requiredLevel));
             }
-
-            //if isOpticsSlot {
-            //    ArrayPush(equipmentAreaSlots, lastEquipSlotID);
-            //}
 
             TweakDBManager.SetFlat(equipmentAreaID + t".defaultNumSlots", defaultNumSlots);
             TweakDBManager.SetFlat(equipmentAreaID + t".equipSlots", equipmentAreaSlots);

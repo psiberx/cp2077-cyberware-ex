@@ -1,3 +1,5 @@
+import CyberwareEx.*
+
 // Overrides how the active item is resolved for the system replacement slot so that
 // it returns a Cyberdeck installed in any slot, not just in the first.
 @wrapMethod(EquipmentSystemPlayerData)
@@ -36,6 +38,18 @@ public func GetTaggedItem(equipArea: gamedataEquipmentArea, requiredTags: array<
     }
 
     return ItemID.None();
+}
+
+@addMethod(EquipmentSystemPlayerData)
+public func ApplyAreaPowerUps(equipArea: gamedataEquipmentArea) {
+    let equipAreaIndex = this.GetEquipAreaIndex(equipArea);
+    let numSlots = ArraySize(this.m_equipment.equipAreas[equipAreaIndex].equipSlots);
+    let slotIndex = 0;
+
+    while slotIndex < numSlots {
+        PowerUpCyberwareEffector.PowerUpCyberwareInSlot(this.m_owner, equipArea, slotIndex);
+        slotIndex += 1;
+    }
 }
 
 @wrapMethod(EquipmentSystemPlayerData)
@@ -105,6 +119,28 @@ private final const func IsSlotLocked(slot: SEquipSlot, out visibleWhenLocked: B
     }
     visibleWhenLocked = true;
     return false;
+}
+
+@if(ModuleExists("CyberwareEx.OverrideMode"))
+@replaceMethod(EquipmentSystemPlayerData)
+private final func InitializeEquipmentArea(equipAreaRecord: ref<EquipmentArea_Record>, out equipArea: SEquipArea) {
+    let equipSlotRecords: array<wref<EquipSlot_Record>>;
+    equipAreaRecord.EquipSlots(equipSlotRecords);
+
+    if CyberwareHelper.IsCyberwareArea(equipArea.areaType) {
+        let numberOfRecords = ArraySize(equipSlotRecords);
+        let numberOfSlots = ArraySize(equipArea.equipSlots);
+        if numberOfSlots > numberOfRecords {
+            let slotIndex = numberOfRecords;
+            while slotIndex < numberOfSlots {
+                let equipSlotID = CyberwareHelper.CreateEquipSlotRecord(equipArea.areaType, slotIndex);
+                ArrayPush(equipSlotRecords, TweakDBInterface.GetEquipSlotRecord(equipSlotID));
+                slotIndex += 1;
+            }
+        }
+    }
+
+    this.InitializeEquipSlotsFromRecords(equipSlotRecords, equipArea.equipSlots);
 }
 
 @if(ModuleExists("CyberwareEx.OverrideMode"))

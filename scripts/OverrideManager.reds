@@ -60,9 +60,13 @@ public class OverrideManager {
             return false;
         }
 
+        let newSlotIndex = overrideState.currentSlots;
+        let equipSlotID = CyberwareHelper.CreateEquipSlotRecord(areaType, newSlotIndex);
+
         ArrayResize(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots, overrideState.currentSlots + 1);
-        this.m_playerData.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(t"EquipmentArea.SimpleEquipSlot"),
-            this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots[overrideState.currentSlots]);
+
+        this.m_playerData.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(equipSlotID),
+            this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots[newSlotIndex]);
 
         if !free {
             let transactionSystem = GameInstance.GetTransactionSystem(this.m_playerData.m_owner.GetGame());

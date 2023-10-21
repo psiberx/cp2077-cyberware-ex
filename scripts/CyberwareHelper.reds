@@ -72,4 +72,101 @@ public class CyberwareHelper {
     public static func IsCyberdeckEquipped(owner: ref<GameObject>) -> Bool {
         return GameInstance.GetStatsSystem(owner.GetGame()).GetStatBoolValue(Cast(owner.GetEntityID()), gamedataStatType.HasCyberdeck);
     }
+
+    public static func IsCyberwareArea(equipArea: gamedataEquipmentArea) -> Bool {
+        switch equipArea {
+            case gamedataEquipmentArea.ArmsCW:
+            case gamedataEquipmentArea.CardiovascularSystemCW:
+            case gamedataEquipmentArea.EyesCW:
+            case gamedataEquipmentArea.FrontalCortexCW:
+            case gamedataEquipmentArea.HandsCW:
+            case gamedataEquipmentArea.IntegumentarySystemCW:
+            case gamedataEquipmentArea.LegsCW:
+            case gamedataEquipmentArea.MusculoskeletalSystemCW:
+            case gamedataEquipmentArea.NervousSystemCW:
+            case gamedataEquipmentArea.SystemReplacementCW:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static func CreateEquipSlotRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> TweakDBID {
+        let equipAreaName = ToString(equipArea);
+        let equipSlotName = s"EquipmentArea.\(equipAreaName)_Slot_\(slotIndex)";
+        let equipSlotID = TDBID.Create(equipSlotName);
+
+        if !IsDefined(TweakDBInterface.GetEquipSlotRecord(equipSlotID)) {
+            TweakDBManager.CreateRecord(equipSlotID, n"EquipSlot");
+
+            if Equals(equipArea, gamedataEquipmentArea.MusculoskeletalSystemCW) {
+                let powerUpID = CyberwareHelper.CreatePowerUpRecord(equipArea, slotIndex);
+                TweakDBManager.SetFlat(equipSlotID + t".OnInsertion", [powerUpID]);
+            }
+
+            TweakDBManager.UpdateRecord(equipSlotID);
+            TweakDBManager.RegisterName(StringToName(equipSlotName));
+        }
+
+        return equipSlotID;
+    }
+
+    public static func CreateEquipSlotRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32, requiredPerk: gamedataNewPerkType, requiredLevel: Int32) -> TweakDBID {
+        let equipAreaName = ToString(equipArea);
+        let equipSlotName = s"EquipmentArea.\(equipAreaName)_Slot_\(slotIndex)_Perk_\(requiredPerk)_\(requiredLevel)";
+        let equipSlotID = TDBID.Create(equipSlotName);
+
+        if !IsDefined(TweakDBInterface.GetEquipSlotRecord(equipSlotID)) {
+            let prereqName = s"Prereqs.HasPerk_\(requiredPerk)_\(requiredLevel)";
+            let prereqID = TDBID.Create(prereqName);
+
+            if !IsDefined(TweakDBInterface.GetPrereqRecord(prereqID)) {
+                TweakDBManager.CreateRecord(prereqID, n"PlayerIsNewPerkBoughtPrereq");
+                TweakDBManager.SetFlat(prereqID + t".perkType", ToString(requiredPerk));
+                TweakDBManager.SetFlat(prereqID + t".level", requiredLevel);
+                TweakDBManager.UpdateRecord(prereqID);
+                TweakDBManager.RegisterName(StringToName(prereqName));
+            }
+
+            TweakDBManager.CreateRecord(equipSlotID, n"EquipSlot");
+            TweakDBManager.SetFlat(equipSlotID + t".unlockPrereqRecord", prereqID);
+            TweakDBManager.SetFlat(equipSlotID + t".visibleWhenLocked", true);
+
+            if Equals(equipArea, gamedataEquipmentArea.MusculoskeletalSystemCW) {
+                let powerUpID = CyberwareHelper.CreatePowerUpRecord(equipArea, slotIndex);
+                TweakDBManager.SetFlat(equipSlotID + t".OnInsertion", [powerUpID]);
+            }
+
+            TweakDBManager.UpdateRecord(equipSlotID);
+            TweakDBManager.RegisterName(StringToName(equipSlotName));
+        }
+
+        return equipSlotID;
+    }
+
+    public static func CreatePowerUpRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> TweakDBID {
+        let equipAreaName = ToString(equipArea);
+        let packageName = s"EquipmentArea.\(equipAreaName)_Slot_\(slotIndex)_PowerUp";
+        let packageID = TDBID.Create(packageName);
+
+        if !IsDefined(TweakDBInterface.GetGameplayLogicPackageRecord(packageID)) {
+            let effectorName = s"\(packageName)_Effector";
+            let effectorID = TDBID.Create(effectorName);
+
+            if !IsDefined(TweakDBInterface.GetEffectorRecord(effectorID)) {
+                TweakDBManager.CloneRecord(effectorID, t"Effectors.PowerUpCyberwareEffector");
+                TweakDBManager.SetFlat(effectorID + t".targetEquipArea", equipAreaName);
+                TweakDBManager.SetFlat(effectorID + t".targetEquipSlotIndex", slotIndex);
+                TweakDBManager.UpdateRecord(effectorID);
+                TweakDBManager.RegisterName(StringToName(effectorName));
+            }
+
+            TweakDBManager.CreateRecord(packageID, n"GameplayLogicPackage");
+            TweakDBManager.SetFlat(packageID + t".effectors", [effectorID]);
+            TweakDBManager.UpdateRecord(packageID);
+            TweakDBManager.RegisterName(StringToName(packageName));
+        }
+
+        return packageID;
+    }
 }

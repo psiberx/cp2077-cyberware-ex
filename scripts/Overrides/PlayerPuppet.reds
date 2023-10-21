@@ -38,7 +38,7 @@ private final func ActivateIconicCyberware() {
         }
     }
 
-    if hasBerserk && (isOnlyOneAbility || (!isFocusMode && (isBlocking || !hasSandevistan)) || isCombinedAbilityMode) {
+    if hasBerserk && !isFocusMode && (isOnlyOneAbility || ((isBlocking || !hasSandevistan)) || isCombinedAbilityMode) {
         if canUseBerserk && !isInVehicle {
             let berserkItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
 
@@ -49,7 +49,7 @@ private final func ActivateIconicCyberware() {
         }
     }
 
-    if hasSandevistan && (isOnlyOneAbility || (!isFocusMode && (!isBlocking || !hasBerserk)) || isCombinedAbilityMode) {
+    if hasSandevistan && !isFocusMode && (isOnlyOneAbility || ((!isBlocking || !hasBerserk)) || isCombinedAbilityMode) {
         if canUseSandevistan && TimeDilationHelper.CanUseTimeDilation(this) {
             let sandevistanItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
 

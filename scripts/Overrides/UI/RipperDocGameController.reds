@@ -143,6 +143,7 @@ protected cb func OnSlotHover(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
                 if overrideState.currentSlots != overrideState.defaultSlots {
                     this.m_buttonHintsController.AddButtonHint(n"disassemble_item",
                         // "[" + GetLocalizedText("Gameplay-Devices-Interactions-Helpers-Hold") + "] " +
+                        GetLocalizedText("LocKey#53485") + ": " +
                         GetLocalizedTextByKey(n"UI-ResourceExports-Reset"));
                     // cursorData.AddAction(n"disassemble_item");
                 }
@@ -150,6 +151,7 @@ protected cb func OnSlotHover(evt: ref<ItemDisplayHoverOverEvent>) -> Bool {
                 if overrideState.currentSlots < overrideState.maxSlots {
                     this.m_buttonHintsController.AddButtonHint(n"drop_item",
                         // "[" + GetLocalizedText("Gameplay-Devices-Interactions-Helpers-Hold") + "] " +
+                        GetLocalizedText("LocKey#53485") + ": " +
                         GetLocalizedTextByKey(n"UI-ResourceExports-Buy"));
                     // cursorData.AddAction(n"drop_item");
                 }

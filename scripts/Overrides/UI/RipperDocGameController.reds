@@ -16,7 +16,7 @@ private final func Init() {
     text.SetVerticalAlignment(textVerticalAlignment.Top);
     text.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");
     text.BindProperty(n"tintColor", n"MainColors.Red");
-    text.SetText("POWERED BY CYBERWARE-EX");
+    text.SetText(s"POWERED BY CYBERWARE-EX \(CyberwareEx.Version())");
     text.Reparent(this.GetRootCompoundWidget());
 }
 

@@ -86,9 +86,8 @@ public class CyberwareHelper {
             case gamedataEquipmentArea.NervousSystemCW:
             case gamedataEquipmentArea.SystemReplacementCW:
                 return true;
-            default:
-                return false;
         }
+        return false;
     }
 
     public static func CreateEquipSlotRecord(equipArea: gamedataEquipmentArea, slotIndex: Int32) -> TweakDBID {

@@ -1,16 +1,5 @@
 import CyberwareEx.*
 
-// Overrides how the active item is resolved for the system replacement slot so that
-// it returns a Cyberdeck installed in any slot, not just in the first.
-@wrapMethod(EquipmentSystemPlayerData)
-public final const func GetActiveItem(equipArea: gamedataEquipmentArea) -> ItemID {
-    if Equals(equipArea, gamedataEquipmentArea.SystemReplacementCW) {
-        return this.GetTaggedItem(equipArea, n"Cyberdeck");
-    }
-
-    return wrappedMethod(equipArea);
-}
-
 @addMethod(EquipmentSystemPlayerData)
 public func HasTaggedItem(equipArea: gamedataEquipmentArea, requiredTag: CName) -> Bool {
     return ItemID.IsValid(this.GetTaggedItem(equipArea, [requiredTag]));
@@ -52,6 +41,18 @@ public func ApplyAreaPowerUps(equipArea: gamedataEquipmentArea) {
     }
 }
 
+// Overrides how the active item is resolved for the system replacement slot so that
+// it returns a Cyberdeck installed in any slot, not just in the first.
+@wrapMethod(EquipmentSystemPlayerData)
+public final const func GetActiveItem(equipArea: gamedataEquipmentArea) -> ItemID {
+    if Equals(equipArea, gamedataEquipmentArea.SystemReplacementCW) {
+        return this.GetTaggedItem(equipArea, n"Cyberdeck");
+    }
+
+    return wrappedMethod(equipArea);
+}
+
+// Allows multiple cyberware with the same effects.
 @wrapMethod(EquipmentSystemPlayerData)
 private final func UnequipItem(equipAreaIndex: Int32, slotIndex: Int32, opt forceRemove: Bool) {
     wrappedMethod(equipAreaIndex, slotIndex, forceRemove);

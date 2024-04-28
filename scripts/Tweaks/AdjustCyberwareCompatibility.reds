@@ -6,9 +6,10 @@ class AdjustCyberwareCompatibility extends ScriptableTweak {
         let attachmentSlots = CyberwareConfig.Attachments();
         let cyberwareRemappings = CyberwareConfig.Remappings();
         for record in TweakDBInterface.GetRecords(n"Item_Record") {
-            let cyberwareType = TweakDBInterface.GetCNameDefault(record.GetID() + t".cyberwareType");
-            let placementSlots = TweakDBInterface.GetForeignKeyArray(record.GetID() + t".placementSlots");
-            if NotEquals(cyberwareType, n"") {
+            let cyberwareTypeFlat = TweakDBInterface.GetFlat(record.GetID() + t".cyberwareType");
+            if IsDefined(cyberwareTypeFlat) {
+                let cyberwareType = FromVariant<CName>(cyberwareTypeFlat);
+                let placementSlots = TweakDBInterface.GetForeignKeyArray(record.GetID() + t".placementSlots");
                 if ArraySize(placementSlots) > 0 {
                     if Equals(cyberwareType, n"IconicJenkinsTendons") {
                         cyberwareType = n"JenkinsTendons";

@@ -179,20 +179,47 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
 
 @if(!ModuleExists("CyberarmOverhaul"))
 @replaceMethod(EquipmentSystemPlayerData)
-public final const func GetActiveMeleeWare() -> ItemID {
+private final func HandleArmsCWUnequip(owner: ref<PlayerPuppet>) -> Void {
+    let meleeWareID = ItemID.None();
     let slotIndex = 0;
     let equipAreaIndex = this.GetEquipAreaIndex(gamedataEquipmentArea.ArmsCW);
     let numberOfSlots = ArraySize(this.m_equipment.equipAreas[equipAreaIndex].equipSlots);
     while slotIndex < numberOfSlots {
         let itemID = this.m_equipment.equipAreas[equipAreaIndex].equipSlots[slotIndex].itemID;
         if ItemID.IsValid(itemID) {
+            meleeWareID = itemID;
             let itemRecord = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(itemID));
-            if Equals(itemRecord.ItemCategory().Type(), gamedataItemCategory.Weapon)
-                && !itemRecord.TagsContains(n"ProjectileLauncher") {
-                return itemID;
+            if !itemRecord.TagsContains(n"ProjectileLauncher") {
+                break;
             }
         }
         slotIndex += 1;
     }
-    return ItemID.None();
+
+    if !ItemID.IsValid(meleeWareID) {
+        meleeWareID = this.EquipBaseFists();
+    } else {
+        if !this.HasTaggedItem(gamedataEquipmentArea.ArmsCW, n"StrongArms") {
+            this.EquipBaseFists();
+        }
+    }
+
+    EquipmentSystemPlayerData.UpdateArmSlot(owner, meleeWareID, false);
+    EquipmentSystemPlayerData.UpdateArmSlot(owner, meleeWareID, true);
+}
+
+@if(!ModuleExists("CyberarmOverhaul"))
+@wrapMethod(EquipmentSystemPlayerData)
+public final static func UpdateArmSlot(owner: ref<PlayerPuppet>, itemToDraw: ItemID, equipHolsteredItem: Bool) -> Void {
+    if equipHolsteredItem {
+        let playerData = EquipmentSystem.GetData(owner);
+        if playerData.CheckTagsInItem(itemToDraw, [n"ProjectileLauncher"]) {
+            let meleeWareID = playerData.GetActiveMeleeWare();
+            if ItemID.IsValid(meleeWareID) {
+                itemToDraw = meleeWareID;
+            }
+        }
+    }
+
+    wrappedMethod(owner, itemToDraw, equipHolsteredItem);
 }

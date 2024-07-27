@@ -1,9 +1,14 @@
 [[UNRESOLVED_REF]]
-id = "TWEAKXL_10805"
+id = "TWEAKXL_11002"
 span_starts_with = "TweakXL"
-message = "Install TweakXL 1.8.5 or higher"
+message = "Install TweakXL 1.10.2 or higher"
 
 [[UNRESOLVED_REF]]
-id = "TWEAKXL_10805"
+id = "TWEAKXL_11002"
 span_starts_with = "TweakDBManager"
-message = "Install TweakXL 1.8.5 or higher"
+message = "Install TweakXL 1.10.2 or higher"
+
+[[UNRESOLVED_REF]]
+id = "CODEWARE_11200"
+span_starts_with = "Codeware"
+message = "Install Codeware 1.12.0 or higher"

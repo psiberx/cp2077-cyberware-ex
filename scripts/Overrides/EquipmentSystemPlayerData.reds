@@ -179,7 +179,7 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
 
 @if(!ModuleExists("CyberarmOverhaul"))
 @replaceMethod(EquipmentSystemPlayerData)
-private final func HandleArmsCWUnequip(owner: ref<PlayerPuppet>) -> Void {
+private final func HandleArmsCWUnequip(owner: ref<PlayerPuppet>) {
     let meleeWareID = ItemID.None();
     let slotIndex = 0;
     let equipAreaIndex = this.GetEquipAreaIndex(gamedataEquipmentArea.ArmsCW);
@@ -210,7 +210,7 @@ private final func HandleArmsCWUnequip(owner: ref<PlayerPuppet>) -> Void {
 
 @if(!ModuleExists("CyberarmOverhaul"))
 @wrapMethod(EquipmentSystemPlayerData)
-public final static func UpdateArmSlot(owner: ref<PlayerPuppet>, itemToDraw: ItemID, equipHolsteredItem: Bool) -> Void {
+public final static func UpdateArmSlot(owner: ref<PlayerPuppet>, itemToDraw: ItemID, equipHolsteredItem: Bool) {
     if equipHolsteredItem {
         let playerData = EquipmentSystem.GetData(owner);
         if playerData.CheckTagsInItem(itemToDraw, [n"ProjectileLauncher"]) {

@@ -223,7 +223,9 @@ protected cb func OnSlotUpgradeConfirmed(data: ref<inkGameNotificationData>) -> 
             : null;
 
         this.m_overrideManager.UpgradeSlot(areaType, false, vendor);
+
         this.UpdateMinigrids();
+        this.UpdateMoney();
     }
 
     this.m_overrideConfirmationToken = null;
@@ -239,7 +241,9 @@ protected cb func OnSlotResetConfirmed(data: ref<inkGameNotificationData>) -> Bo
             : null;
 
         this.m_overrideManager.ResetSlot(areaType, false, vendor);
+
         this.UpdateMinigrids();
+        this.UpdateMoney();
     }
 
     this.m_overrideConfirmationToken = null;
@@ -249,4 +253,12 @@ protected cb func OnSlotResetConfirmed(data: ref<inkGameNotificationData>) -> Bo
 @replaceMethod(RipperDocGameController)
 private final func IsEquipmentAreaRequiringPerk(equipmentArea: gamedataEquipmentArea) -> Bool {
     return false;
+}
+
+@if(ModuleExists("CyberwareEx.OverrideMode"))
+@addMethod(RipperDocGameController)
+private final func UpdateMoney() {
+    let blackBoardDef = GetAllBlackboardDefs().UI_Vendor;
+    let blackBoard = GameInstance.GetBlackboardSystem(this.GetPlayerControlledObject().GetGame()).Get(blackBoardDef);
+    blackBoard.SignalVariant(blackBoardDef.VendorData);
 }

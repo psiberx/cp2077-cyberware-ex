@@ -1,7 +1,7 @@
 module CyberwareEx
 
 public abstract class CompatibilityManager {
-    public static func RequiredTweakXL() -> String = "1.10.2";
+    public static func RequiredTweakXL() -> String = "1.10.3";
     public static func RequiredCodeware() -> String = "1.12.0";
 
     public static func CheckRequirements() -> Bool {

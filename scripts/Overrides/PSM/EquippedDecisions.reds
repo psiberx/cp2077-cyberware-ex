@@ -1,3 +1,4 @@
+// Allows Projectile Launcher System to be chanrged when multiple cyberarms are equipped.
 @wrapMethod(EquippedDecisions)
 protected final const func ToUnequipCycle(stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
     if this.IsLeftHandLogic(this.stateMachineInstanceData) {

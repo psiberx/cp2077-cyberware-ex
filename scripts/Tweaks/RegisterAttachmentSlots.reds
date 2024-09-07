@@ -28,15 +28,16 @@ class RegisterAttachmentSlots extends ScriptableTweak {
             let character = record as Character_Record;
             if ArrayContains(playerEntityTemplates, character.EntityTemplatePath()) || Equals(GetLocalizedTextByKey(character.DisplayName()), playerDisplayName) {
                 let characterSlots = TweakDBInterface.GetForeignKeyArray(character.GetID() + t".attachmentSlots");
-
-                for attachmentSlot in attachmentSlots {
-                    if !ArrayContains(characterSlots, attachmentSlot.slotID) {
-                        ArrayPush(characterSlots, attachmentSlot.slotID);
+                if ArrayContains(characterSlots, t"AttachmentSlots.SystemReplacementCW") {
+                    for attachmentSlot in attachmentSlots {
+                        if !ArrayContains(characterSlots, attachmentSlot.slotID) {
+                            ArrayPush(characterSlots, attachmentSlot.slotID);
+                        }
                     }
-                }
 
-                TweakDBManager.SetFlat(character.GetID() + t".attachmentSlots", characterSlots);
-                TweakDBManager.UpdateRecord(character.GetID());
+                    TweakDBManager.SetFlat(character.GetID() + t".attachmentSlots", characterSlots);
+                    TweakDBManager.UpdateRecord(character.GetID());
+                }
             }
         }
     }

@@ -200,7 +200,7 @@ private final const func UpdateQuickWheel() {
 @if(!ModuleExists("CyberarmOverhaul"))
 @replaceMethod(EquipmentSystemPlayerData)
 public final static func UpdateArmSlot(owner: ref<PlayerPuppet>, itemToDraw: ItemID, equipHolsteredItem: Bool) {
-    if !IsDefined(owner) || !ItemID.IsValid(itemToDraw) {
+    if !IsDefined(owner) || !ItemID.IsValid(itemToDraw) || owner.IsJohnnyReplacer() {
       return;
     }
 

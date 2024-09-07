@@ -1,6 +1,7 @@
 @replaceMethod(gameuiInventoryGameController)
 private final func RefreshPlayerCyberware() {
-    let playerData = EquipmentSystem.GetData(this.GetPlayerControlledObject());
+    let player = this.GetPlayerControlledObject();
+    let playerData = EquipmentSystem.GetData(player);
 
     let cyberwareAreas: array<gamedataEquipmentArea>;
     ArrayPush(cyberwareAreas, gamedataEquipmentArea.SystemReplacementCW);
@@ -11,6 +12,7 @@ private final func RefreshPlayerCyberware() {
     let requiredSlotWidgets = 0;
 
     ArrayClear(this.m_cyberwareItems);
+    let dummyItems: array<InventoryItemData>;
 
     let i = 0;
     while i < ArraySize(cyberwareAreas) {
@@ -21,17 +23,28 @@ private final func RefreshPlayerCyberware() {
             let itemID = playerData.m_equipment.equipAreas[areaIndex].equipSlots[slotIndex].itemID;
             if ItemID.IsValid(itemID) {
                 let itemData = this.m_InventoryManager.GetItemDataFromIDInLoadout(itemID);
-                ArrayPush(this.m_cyberwareItems, itemData);
-                requiredSlotWidgets = ArraySize(this.m_cyberwareItems);
-                if requiredSlotWidgets == maxSlotWidgets {
-                    break;
+                let abilities: array<InventoryItemAbility>;
+                let attachments: array<ref<InventoryItemAttachments>>;
+                this.m_InventoryManager.GetAttachements(player, itemID, itemData.GameItemData, attachments, abilities, false);
+                if ArraySize(attachments) > 0 {
+                    ArrayPush(this.m_cyberwareItems, itemData);
+                    requiredSlotWidgets = ArraySize(this.m_cyberwareItems);
+                    if requiredSlotWidgets == maxSlotWidgets {
+                        break;
+                    }
+                } else {
+                    ArrayPush(dummyItems, itemData);
                 }
             }
             slotIndex += 1;
         }
-        if requiredSlotWidgets == maxSlotWidgets {
-            break;
-        }
+        i += 1;
+    }
+
+    i = 0;
+    while requiredSlotWidgets < maxSlotWidgets && i < ArraySize(dummyItems) {
+        ArrayPush(this.m_cyberwareItems, dummyItems[i]);
+        requiredSlotWidgets += 1;
         i += 1;
     }
 

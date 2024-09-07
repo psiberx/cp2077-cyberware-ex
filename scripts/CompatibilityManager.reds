@@ -1,8 +1,8 @@
 module CyberwareEx
 
 public abstract class CompatibilityManager {
-    public static func RequiredTweakXL() -> String = "1.10.3";
-    public static func RequiredCodeware() -> String = "1.12.0";
+    public static func RequiredTweakXL() -> String = "1.10.4";
+    public static func RequiredCodeware() -> String = "1.12.6";
 
     public static func CheckRequirements() -> Bool {
         return Codeware.Require(CompatibilityManager.RequiredCodeware())
@@ -11,9 +11,13 @@ public abstract class CompatibilityManager {
 
     public static func CheckConflicts(game: GameInstance, out conflicts: array<String>) -> Bool {
         let itemController = new InventoryItemDisplayController();
-        itemController.SetLocked(true, false);
+        itemController.SetLocked(true, true);
         if !itemController.m_isLocked {
-            ArrayPush(conflicts, "No Special Outfit Lock");
+            if itemController.m_visibleWhenLocked {
+                ArrayPush(conflicts, "No Special Outfit Lock");
+            } else {
+                ArrayPush(conflicts, "Never Lock Outfits");
+            }
         }
 
         return ArraySize(conflicts) == 0;

@@ -1,6 +1,8 @@
 @wrapMethod(HotkeysWidgetController)
 protected cb func OnInitialize() -> Bool {
     wrappedMethod();
+
+    this.FixHudSlotSize();
     this.SpawnCyberwareExtraSlots();
 }
 
@@ -37,4 +39,17 @@ protected func SpawnCyberwareExtraSlots() {
         }
         i += 1;
     }
+
+    // TODO: Adjust input hints
+}
+
+@if(ModuleExists("CustomQuickslots"))
+@addMethod(HotkeysWidgetController)
+protected func FixHudSlotSize() {}
+
+@if(!ModuleExists("CustomQuickslots"))
+@addMethod(HotkeysWidgetController)
+protected func FixHudSlotSize() {
+    let hudEntryInfo = this.GetRootWidget().GetUserData(n"inkHudEntryInfo") as inkHudEntryInfo;
+    hudEntryInfo.size = new Vector2(2400, 300);
 }

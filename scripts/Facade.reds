@@ -1,7 +1,7 @@
 import CyberwareEx.*
 
 public abstract class CyberwareEx {
-    public static func Version() -> String = "1.5.4"
+    public static func Version() -> String = "1.6.0"
 
     public static func ResetSlot(game: GameInstance, areaType: gamedataEquipmentArea) {
         let player = GetPlayer(game);

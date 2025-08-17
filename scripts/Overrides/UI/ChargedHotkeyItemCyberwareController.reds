@@ -4,16 +4,16 @@ protected func UpdateCurrentItem() {
 
     let playerData = this.m_equipmentSystem.GetPlayerData(this.GetPlayerControlledObject());
     let activeItemID = playerData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, cyberwareType);
-    
+
     if ItemID.IsValid(activeItemID) {
         let previousItem = this.m_currentItem;
-        
+
         this.m_currentItem = this.m_inventoryManager.GetInventoryItemDataFromItemID(activeItemID);
         this.m_currentItem.Quantity = 0;
 
         this.m_hotkeyItemController.Setup(this.m_currentItem, ItemDisplayContext.DPAD_RADIAL);
         this.ResolveState();
-        
+
         if previousItem.ID != this.m_currentItem.ID {
             this.UpdateStatListener();
             this.UpdateChargeValue(
@@ -41,7 +41,7 @@ protected func UpdateCurrentItem() {
         }
     } else {
         this.m_currentItem = this.m_inventoryManager.GetInventoryItemDataFromItemID(ItemID.None());
-        this.m_hotkeyItemController.Setup(null, ItemDisplayContext.DPAD_RADIAL);
+        this.m_hotkeyItemController.Setup(null, ItemDisplayContext.DPAD_RADIAL, this.m_hotkeyItemController.m_owned);
         this.GetRootWidget().SetVisible(false);
     }
 }

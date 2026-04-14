@@ -22,12 +22,12 @@ class RegisterCyberwareSlots extends ScriptableTweak {
             }
 
             for extraSlot in expansion.extraSlots {
-                ArrayPush(equipmentAreaSlots,
-                    CyberwareHelper.CreateEquipSlotRecord(
+                let TBSlotRecord:TweakDBID = CyberwareHelper.CreateEquipSlotRecord(
                         expansion.equipmentArea,
                         ArraySize(equipmentAreaSlots),
                         extraSlot.requiredPerk,
-                        extraSlot.requiredLevel));
+                        extraSlot.requiredLevel);
+                ArrayPush(equipmentAreaSlots, TBSlotRecord);
             }
 
             TweakDBManager.SetFlat(equipmentAreaID + t".defaultNumSlots", defaultNumSlots);

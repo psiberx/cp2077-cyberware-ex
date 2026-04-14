@@ -17,6 +17,9 @@ protected cb func OnInitialize() -> Bool {
 protected cb func OnIntroAnimationFinished_METER(proxy: ref<inkAnimProxy>) -> Bool {
     wrappedMethod(proxy);
 
+    // cj fix delete
+    return true;
+
     if IsExtendedMode() || IsOverrideMode() || IsCustomMode() {
         let root = this.GetRootWidget();
         let parent = root.parentWidget as inkCompoundWidget;

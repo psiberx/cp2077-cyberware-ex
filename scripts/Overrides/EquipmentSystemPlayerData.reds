@@ -186,11 +186,11 @@ private final const func UpdateQuickWheel() {
     while i < ArraySize(this.m_hotkeys) {
         let itemID = this.m_hotkeys[i].GetItemID();
         if ItemID.IsValid(itemID) {
-            if this.CheckTagsInItem(itemID, [n"ProjectileLauncher"]) {
+            let itemType = RPGManager.GetItemType(itemID);
+            if ( Equals(itemType, gamedataItemType.Cyb_Ability) || Equals(itemType, gamedataItemType.Cyb_Launcher) || Equals(itemType, gamedataItemType.Cyb_HealingAbility) ) {
                 if !this.IsEquipped(itemID) {
                     this.AssignNextValidItemToHotkey(itemID);
                 }
-                break;
             }
         }
         i += 1;

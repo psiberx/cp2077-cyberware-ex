@@ -6,7 +6,8 @@ private final func GetValidCombatCyberware() -> InventoryItemData {
     let itemData: InventoryItemData;
 
     if ItemID.IsValid(itemID) {
-        itemData = this.inventoryManager.GetInventoryItemDataFromItemID(itemID);
+        //itemData = this.inventoryManager.GetInventoryItemDataFromItemID(itemID);
+        itemData = this.inventoryManager.GetItemDataFromIDInLoadout(itemID);    // cj fix
     }
 
     return itemData;

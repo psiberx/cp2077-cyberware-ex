@@ -20,7 +20,14 @@ protected cb func OnIntroAnimationFinished_METER(proxy: ref<inkAnimProxy>) -> Bo
     if IsExtendedMode() || IsOverrideMode() || IsCustomMode() {
         let root = this.GetRootWidget();
         let parent = root.parentWidget as inkCompoundWidget;
+        let wrapper = parent.GetWidget(n"wrapper") as inkCompoundWidget;
 
-        parent.ReorderChild(root, 0);
+        let oldIndex = ArrayFindFirst(parent.children.children, root);
+        let newIndex = ArrayFindFirst(wrapper.children.children, wrapper.GetWidget(n"paperDollWrapper")) + 1;
+        root.Reparent(wrapper, newIndex);
+
+        let dummy = new inkCanvas();
+        parent.AddChildWidget(dummy);
+        parent.ReorderChild(dummy, oldIndex);
     }
 }

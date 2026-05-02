@@ -22,10 +22,11 @@ class RegisterCyberwareSlots extends ScriptableTweak {
             }
 
             for extraSlot in expansion.extraSlots {
+                let extraSlotIndex = ArraySize(equipmentAreaSlots);
                 ArrayPush(equipmentAreaSlots,
                     CyberwareHelper.CreateEquipSlotRecord(
                         expansion.equipmentArea,
-                        ArraySize(equipmentAreaSlots),
+                        extraSlotIndex,
                         extraSlot.requiredPerk,
                         extraSlot.requiredLevel));
             }

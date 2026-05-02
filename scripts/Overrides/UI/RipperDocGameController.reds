@@ -183,7 +183,7 @@ protected cb func OnPreviewCyberwareClick(evt: ref<inkPointerEvent>) -> Bool {
             case evt.IsAction(n"drop_item"):
                 if overrideState.currentSlots < overrideState.maxSlots {
                     if overrideState.canBuyOverride {
-                        this.m_overrideConfirmationToken = OverrideConfirmationPopup.Show(this, OperrideAction.Upgrade, overrideState);
+                        this.m_overrideConfirmationToken = OverrideConfirmationPopup.Show(this, OverrideAction.Upgrade, overrideState);
                         this.m_overrideConfirmationToken.RegisterListener(this, n"OnSlotUpgradeConfirmed");
                     } else {
                         this.ShowNotEnoughMoneyNotification();
@@ -193,7 +193,7 @@ protected cb func OnPreviewCyberwareClick(evt: ref<inkPointerEvent>) -> Bool {
             case evt.IsAction(n"disassemble_item"):
                 if overrideState.currentSlots != overrideState.defaultSlots {
                     if overrideState.canBuyReset {
-                        this.m_overrideConfirmationToken = OverrideConfirmationPopup.Show(this, OperrideAction.Reset, overrideState);
+                        this.m_overrideConfirmationToken = OverrideConfirmationPopup.Show(this, OverrideAction.Reset, overrideState);
                         this.m_overrideConfirmationToken.RegisterListener(this, n"OnSlotResetConfirmed");
                     } else {
                         this.ShowNotEnoughMoneyNotification();

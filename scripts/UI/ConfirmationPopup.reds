@@ -1,12 +1,12 @@
 module CyberwareEx
 
-enum OperrideAction {
+public enum OverrideAction {
     Upgrade = 1,
     Reset = 2
 }
 
 public class OverrideConfirmationPopup {
-    public static func Show(controller: ref<worlduiIGameController>, action: OperrideAction, slotState: ref<OverrideState>) -> ref<inkGameNotificationToken> {
+    public static func Show(controller: ref<worlduiIGameController>, action: OverrideAction, slotState: ref<OverrideState>) -> ref<inkGameNotificationToken> {
         let title = OverrideConfirmationPopup.GetTitle(action);
 
         let areaLabel = OverrideConfirmationPopup.GetAreaLabel();
@@ -36,30 +36,30 @@ public class OverrideConfirmationPopup {
         return IntEnum<gamedataEquipmentArea>(popupData.identifier);
     }
 
-    private static func GetTitle(action: OperrideAction) -> String {
+    private static func GetTitle(action: OverrideAction) -> String {
         return s"\(OverrideConfirmationPopup.GetActionLabel(action)) \(OverrideConfirmationPopup.GetAreaLabel())";
     }
 
-    private static func GetActionLabel(action: OperrideAction) -> String {
-        return Equals(action, OperrideAction.Upgrade)
+    private static func GetActionLabel(action: OverrideAction) -> String {
+        return Equals(action, OverrideAction.Upgrade)
             ? GetLocalizedTextByKey(n"UI-Crafting-Upgrade")
             : GetLocalizedTextByKey(n"UI-ResourceExports-Reset");
     }
 
-    // private static func GetActionText(action: OperrideAction) -> String {
+    // private static func GetActionText(action: OverrideAction) -> String {
     //     return s"\(OverrideConfirmationPopup.GetActionLabel(action)) \(GetLocalizedText("LocKey#36278"))";
     // }
 
-    private static func GetInitialSlots(action: OperrideAction, slotState: ref<OverrideState>) -> Int32 {
+    private static func GetInitialSlots(action: OverrideAction, slotState: ref<OverrideState>) -> Int32 {
         return slotState.currentSlots;
     }
 
-    private static func GetFinalSlots(action: OperrideAction, slotState: ref<OverrideState>) -> Int32 {
-        return Equals(action, OperrideAction.Upgrade) ? slotState.currentSlots + 1 : slotState.defaultSlots;
+    private static func GetFinalSlots(action: OverrideAction, slotState: ref<OverrideState>) -> Int32 {
+        return Equals(action, OverrideAction.Upgrade) ? slotState.currentSlots + 1 : slotState.defaultSlots;
     }
 
-    private static func GetActionPrice(action: OperrideAction) -> Int32 {
-        return Equals(action, OperrideAction.Upgrade) ? OverrideConfig.UpgradePrice() : OverrideConfig.ResetPrice();
+    private static func GetActionPrice(action: OverrideAction) -> Int32 {
+        return Equals(action, OverrideAction.Upgrade) ? OverrideConfig.UpgradePrice() : OverrideConfig.ResetPrice();
     }
 
     private static func GetAreaName(slotState: ref<OverrideState>) -> String {

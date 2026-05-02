@@ -10,8 +10,8 @@ private final func Init() {
     text.SetFontSize(28);
     text.SetOpacity(0.1);
     text.SetAnchor(inkEAnchor.TopRight);
-    text.SetAnchorPoint(new Vector2(1.0, 0.0));
-    text.SetMargin(new inkMargin(0, 160, 100, 0));
+    text.SetAnchorPoint(Vector2(1.0, 0.0));
+    text.SetMargin(inkMargin(0, 160, 100, 0));
     text.SetHorizontalAlignment(textHorizontalAlignment.Left);
     text.SetVerticalAlignment(textVerticalAlignment.Top);
     text.SetStyle(r"base\\gameplay\\gui\\common\\main_colors.inkstyle");

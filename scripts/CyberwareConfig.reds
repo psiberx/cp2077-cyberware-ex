@@ -5,7 +5,7 @@ public struct ExpansionArea {
     public let extraSlots: array<ExpansionSlot>;
 
     public static func Create(equipmentArea: gamedataEquipmentArea, extraSlots: array<ExpansionSlot>) -> ExpansionArea =
-        new ExpansionArea(equipmentArea, extraSlots)
+        ExpansionArea(equipmentArea, extraSlots)
 }
 
 public struct ExpansionSlot {
@@ -13,7 +13,7 @@ public struct ExpansionSlot {
     public let requiredLevel: Int32;
 
     public static func Create(requiredPerk: gamedataNewPerkType, requiredLevel: Int32) -> ExpansionSlot =
-        new ExpansionSlot(requiredPerk, requiredLevel)
+        ExpansionSlot(requiredPerk, requiredLevel)
 }
 
 public struct AttachmentSlot {
@@ -22,7 +22,7 @@ public struct AttachmentSlot {
     public let cyberwareType: CName;
 
     public static func Create(slotName: CName, cyberwareType: CName) -> AttachmentSlot =
-        new AttachmentSlot(TDBID.Create(NameToString(slotName)), slotName, cyberwareType)
+        AttachmentSlot(TDBID.Create(NameToString(slotName)), slotName, cyberwareType)
 }
 
 public struct CyberwareRemapping {
@@ -30,7 +30,7 @@ public struct CyberwareRemapping {
     public let cyberwareType: CName;
 
     public static func Create(recordID: TweakDBID, cyberwareType: CName) -> CyberwareRemapping =
-        new CyberwareRemapping(TweakDBInterface.GetLocKeyDefault(recordID + t".displayName"), cyberwareType)
+        CyberwareRemapping(TweakDBInterface.GetLocKeyDefault(recordID + t".displayName"), cyberwareType)
 }
 
 public abstract class CyberwareConfig {

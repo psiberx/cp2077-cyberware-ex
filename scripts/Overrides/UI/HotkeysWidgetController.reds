@@ -51,5 +51,5 @@ protected func FixHudSlotSize() {}
 @addMethod(HotkeysWidgetController)
 protected func FixHudSlotSize() {
     let hudEntryInfo = this.GetRootWidget().GetUserData(n"inkHudEntryInfo") as inkHudEntryInfo;
-    hudEntryInfo.size = new Vector2(2400, 300);
+    hudEntryInfo.size = Vector2(2400, 300);
 }

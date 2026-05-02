@@ -65,7 +65,7 @@ public class OverrideManager {
 
         ArrayResize(this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots, overrideState.currentSlots + 1);
 
-        this.m_playerData.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(equipSlotID),
+        this.m_playerData.InitializeEquipSlotFromRecord(TweakDBInterface.GetEquipSlotRecord(equipSlotID),
             this.m_playerData.m_equipment.equipAreas[overrideState.areaIndex].equipSlots[newSlotIndex]);
 
         if !free {

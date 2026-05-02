@@ -5,11 +5,11 @@ public struct OverrideArea {
     public let defaultSlots: Int32;
     public let maxSlots: Int32;
 
-    public static func None() -> OverrideArea = new OverrideArea(gamedataEquipmentArea.Invalid, 0, 0)
+    public static func None() -> OverrideArea = OverrideArea(gamedataEquipmentArea.Invalid, 0, 0)
     public static func IsValid(slot: OverrideArea) -> Bool = NotEquals(slot.areaType, gamedataEquipmentArea.Invalid)
     
     public static func Create(areaType: gamedataEquipmentArea, maxSlots: Int32) -> OverrideArea =
-        new OverrideArea(areaType, 0, maxSlots)
+        OverrideArea(areaType, 0, maxSlots)
 }
 
 public abstract class OverrideConfig {

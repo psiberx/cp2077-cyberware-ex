@@ -164,7 +164,7 @@ private final func InitializeEquipSlotsFromRecords(slotRecords: array<wref<Equip
                 ArrayPush(equipSlots, equipSlot);
             }
         } else {
-            this.InitializeEquipSlotFromRecord(TDB.GetEquipSlotRecord(t"EquipmentArea.SimpleEquipSlot"), equipSlots[i]);
+            this.InitializeEquipSlotFromRecord(TweakDBInterface.GetEquipSlotRecord(t"EquipmentArea.SimpleEquipSlot"), equipSlots[i]);
         }
         i += 1;
     }

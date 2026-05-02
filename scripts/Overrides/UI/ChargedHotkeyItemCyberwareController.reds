@@ -41,7 +41,7 @@ protected func UpdateCurrentItem() {
         }
     } else {
         this.m_currentItem = this.m_inventoryManager.GetInventoryItemDataFromItemID(ItemID.None());
-        this.m_hotkeyItemController.Setup(null, ItemDisplayContext.DPAD_RADIAL);
+        this.m_hotkeyItemController.Setup(this.m_currentItem, ItemDisplayContext.DPAD_RADIAL);
         this.GetRootWidget().SetVisible(false);
     }
 }

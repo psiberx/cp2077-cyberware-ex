@@ -44,12 +44,13 @@ public func ApplyAreaPowerUps(equipArea: gamedataEquipmentArea) {
 // Overrides how the active item is resolved for the system replacement slot so that
 // it returns a Cyberdeck installed in any slot, not just in the first.
 @wrapMethod(EquipmentSystemPlayerData)
-public final const func GetActiveItem(equipArea: gamedataEquipmentArea) -> ItemID {
+public final const func GetActiveItem(equipArea: gamedataEquipmentArea, opt isLeftHandWeapon: Bool) -> ItemID {
+    // Patch 2.5 added isLeftHandWeapon (dual wielding); pass it through.
     if Equals(equipArea, gamedataEquipmentArea.SystemReplacementCW) {
         return this.GetTaggedItem(equipArea, n"Cyberdeck");
     }
 
-    return wrappedMethod(equipArea);
+    return wrappedMethod(equipArea, isLeftHandWeapon);
 }
 
 // Allows multiple cyberware with the same effects.
@@ -199,8 +200,10 @@ private final const func UpdateQuickWheel() {
 
 @if(!ModuleExists("CyberarmOverhaul"))
 @replaceMethod(EquipmentSystemPlayerData)
-public final static func UpdateArmSlot(owner: ref<PlayerPuppet>, itemToDraw: ItemID, equipHolsteredItem: Bool) {
-    if !IsDefined(owner) || !ItemID.IsValid(itemToDraw) || owner.IsJohnnyReplacer() {
+public final static func UpdateArmSlot(owner: ref<gamePuppet>, itemToDraw: ItemID, equipHolsteredItem: Bool) {
+    // Patch 2.5 widened owner from PlayerPuppet to gamePuppet.
+    let player = owner as PlayerPuppet;
+    if !IsDefined(owner) || !ItemID.IsValid(itemToDraw) || (IsDefined(player) && player.IsJohnnyReplacer()) {
       return;
     }
 

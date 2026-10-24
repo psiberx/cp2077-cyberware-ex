@@ -213,6 +213,13 @@ public final static func UpdateArmSlot(owner: ref<gamePuppet>, itemToDraw: ItemI
       return;
     }
 
+    // Since 2.5 the game calls this for every item entering or leaving either weapon
+    // slot, including dual-wielded off-hand weapons. Like vanilla, only react to
+    // installed arm cyberware (any slot, so the Projectile Launcher counts) or fists.
+    if !equipmentData.IsEquipped(itemToDraw, gamedataEquipmentArea.ArmsCW) && itemToDraw != equipmentData.GetBaseFistsItemID() {
+      return;
+    }
+
     let transactionSystem = GameInstance.GetTransactionSystem(owner.GetGame());
     let rightWeaponID = transactionSystem.GetItemInSlot(owner, t"AttachmentSlots.WeaponRight").GetItemID();
     let leftWeaponID = transactionSystem.GetItemInSlot(owner, t"AttachmentSlots.WeaponLeft").GetItemID();

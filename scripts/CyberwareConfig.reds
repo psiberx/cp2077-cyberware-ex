@@ -75,7 +75,6 @@ public abstract class CyberwareConfig {
         ExpansionArea.Create(gamedataEquipmentArea.HandsCW, [
             ExpansionSlot.Create(gamedataNewPerkType.Tech_Central_Perk_3_2, 1)
         ]),
-        // 3 extra leg slots (4 total), all unlocked by the same Reflexes perk.
         ExpansionArea.Create(gamedataEquipmentArea.LegsCW, [
             ExpansionSlot.Create(gamedataNewPerkType.Reflexes_Central_Perk_1_3, 1),
             ExpansionSlot.Create(gamedataNewPerkType.Reflexes_Central_Perk_1_3, 1),

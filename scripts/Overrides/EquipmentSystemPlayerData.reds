@@ -45,7 +45,6 @@ public func ApplyAreaPowerUps(equipArea: gamedataEquipmentArea) {
 // it returns a Cyberdeck installed in any slot, not just in the first.
 @wrapMethod(EquipmentSystemPlayerData)
 public final const func GetActiveItem(equipArea: gamedataEquipmentArea, opt isLeftHandWeapon: Bool) -> ItemID {
-    // Patch 2.5 added isLeftHandWeapon (dual wielding); pass it through.
     if Equals(equipArea, gamedataEquipmentArea.SystemReplacementCW) {
         return this.GetTaggedItem(equipArea, n"Cyberdeck");
     }
@@ -201,7 +200,6 @@ private final const func UpdateQuickWheel() {
 @if(!ModuleExists("CyberarmOverhaul"))
 @replaceMethod(EquipmentSystemPlayerData)
 public final static func UpdateArmSlot(owner: ref<gamePuppet>, itemToDraw: ItemID, equipHolsteredItem: Bool) {
-    // Patch 2.5 widened owner from PlayerPuppet to gamePuppet.
     let player = owner as PlayerPuppet;
     if !IsDefined(owner) || !ItemID.IsValid(itemToDraw) || (IsDefined(player) && player.IsJohnnyReplacer()) {
       return;
@@ -213,9 +211,6 @@ public final static func UpdateArmSlot(owner: ref<gamePuppet>, itemToDraw: ItemI
       return;
     }
 
-    // Since 2.5 the game calls this for every item entering or leaving either weapon
-    // slot, including dual-wielded off-hand weapons. Like vanilla, only react to
-    // installed arm cyberware (any slot, so the Projectile Launcher counts) or fists.
     if !equipmentData.IsEquipped(itemToDraw, gamedataEquipmentArea.ArmsCW) && itemToDraw != equipmentData.GetBaseFistsItemID() {
       return;
     }

@@ -9,25 +9,27 @@ protected cb func OnGameAttached() -> Bool {
     }
 }
 
+@addField(PlayerPuppet)
+private let cj_scanner_CyberwareAction_Pressed: Bool;
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-    if this.PlayerLastUsedPad() && Equals(ListenerAction.GetName(action), n"ToggleSprint")
-        && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-        let psmBlackboard = this.GetPlayerStateMachineBlackboard();
-        let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
-        if isFocusMode {
-            if QuickHackableHelper.TryToCycleOverclockedState(this) {
-                let dpadAction = new DPADActionPerformed();
-                dpadAction.action = EHotkey.LBRB;
-                dpadAction.state = EUIActionState.COMPLETED;
-                dpadAction.successful = true;
-
-                GameInstance.GetUISystem(this.GetGame()).QueueEvent(dpadAction);
+    if GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Scanner).GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible) {
+        if Equals(ListenerAction.GetName(action), n"IconicCyberware") {
+            let inputType:gameinputActionType = ListenerAction.GetType(action);
+            if Equals(inputType, gameinputActionType.BUTTON_RELEASED) || Equals(inputType, gameinputActionType.BUTTON_HOLD_COMPLETE) {
+                this.cj_scanner_CyberwareAction_Pressed = false;
+            } else if Equals(inputType, gameinputActionType.BUTTON_PRESSED) || !this.cj_scanner_CyberwareAction_Pressed {    // BUTTON_HOLD_PROGRESS
+                this.cj_scanner_CyberwareAction_Pressed = true;
+                this.ActivateIconicCyberware();
+                return true;
             }
         }
     } else {
-        wrappedMethod(action, consumer);
+        this.cj_scanner_CyberwareAction_Pressed = false;
     }
+    
+    wrappedMethod(action, consumer);
 }
 
 @replaceMethod(PlayerPuppet)
@@ -50,24 +52,31 @@ private final func ActivateIconicCyberware() {
 
     let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
     let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
+    let canUseOverclock = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.CanUseOverclock);
     let canUseBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
     let canUseSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
 
     let psmBlackboard = this.GetPlayerStateMachineBlackboard();
     let meleeWeaponState = IntEnum<gamePSMMeleeWeapon>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.MeleeWeapon));
+    let rangedWeaponState = IntEnum<gamePSMUpperBodyStates>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.UpperBody));
 
     let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
-    let isBlocking = Equals(meleeWeaponState, gamePSMMeleeWeapon.Block) || Equals(meleeWeaponState, gamePSMMeleeWeapon.BlockAttack)
-        || Equals(meleeWeaponState, gamePSMMeleeWeapon.Deflect) || Equals(meleeWeaponState, gamePSMMeleeWeapon.DeflectAttack);
+    let isBlocking = Equals(meleeWeaponState, gamePSMMeleeWeapon.Block) || Equals(meleeWeaponState, gamePSMMeleeWeapon.BlockAttack) || Equals(meleeWeaponState, gamePSMMeleeWeapon.Deflect) || Equals(meleeWeaponState, gamePSMMeleeWeapon.DeflectAttack) || (Equals(rangedWeaponState, gamePSMUpperBodyStates.Aim) && equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"VultureBerserk"));
     let isInVehicle = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
 
     let attempted = false;
     let activated = false;
+    let charging = true;
 
     if hasOverclock && (isOnlyOneAbility || isFocusMode || isCombinedAbilityMode) {
-        attempted = true;
-        if QuickHackableHelper.TryToCycleOverclockedState(this) {
-            activated = true;
+        if canUseOverclock {
+            attempted = true;
+            if QuickHackableHelper.IsOverclockedStateActive(this) {
+                charging = false;
+            }
+            if QuickHackableHelper.TryToCycleOverclockedState(this) || !charging {
+                activated = true;
+            }
         }
     }
 
@@ -96,7 +105,7 @@ private final func ActivateIconicCyberware() {
     if attempted {
         if activated {
             this.IconicCyberwareActivated();
-        } else {
+        } else if charging {
             let audioEvent = new SoundPlayEvent();
             audioEvent.soundName = n"ui_grenade_empty";
 

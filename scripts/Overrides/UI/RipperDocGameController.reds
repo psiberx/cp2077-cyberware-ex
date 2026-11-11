@@ -61,7 +61,7 @@ private final func ShowCWPerkTooltip(widget: wref<inkWidget>) {
     tooltipData.ripperdocHoverState = this.m_ripperdocHoverState;
 
     this.m_TooltipsManager.ShowTooltipAtWidget(n"RipperdocPerkTooltip", widget, tooltipData,
-        gameuiETooltipPlacement.RightTop, false, new inkMargin(this.m_defaultTooltipGap, 0.00, 0.00, 0.00));
+        gameuiETooltipPlacement.RightTop, false, inkMargin(this.m_defaultTooltipGap, 0.00, 0.00, 0.00));
 }
 
 @if(!ModuleExists("CyberwareEx.OverrideMode"))

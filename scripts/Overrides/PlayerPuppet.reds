@@ -12,6 +12,8 @@ protected cb func OnGameAttached() -> Bool {
 @wrapMethod(PlayerPuppet)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
     if Equals(ListenerAction.GetName(action), n"IconicCyberware") {
+    	let isFocusMode = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Scanner).GetBool(GetAllBlackboardDefs().UI_Scanner.UIVisible);
+
     	if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
 			let equipmentData = EquipmentSystem.GetData(this);
 			let characterData = PlayerDevelopmentSystem.GetData(this);
@@ -25,7 +27,9 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
 			if numberOfAbilities > 1 && hasOverclock {
 				this.m_CWMaskInVehicleInputHeld = true;
 			} else {
-				this.ActivateIconicCyberware();
+				if !isFocusMode {
+					this.ActivateIconicCyberware();
+				}
 			}
 
 			return true;
@@ -41,7 +45,9 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
 		if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
 			if this.m_CWMaskInVehicleInputHeld {
 				this.m_CWMaskInVehicleInputHeld = false;
-				this.ActivateIconicCyberware();
+				if !isFocusMode {
+					this.ActivateIconicCyberware();
+				}
 			}
 
 			return true;

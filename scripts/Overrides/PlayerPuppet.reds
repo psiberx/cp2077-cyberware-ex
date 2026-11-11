@@ -73,7 +73,6 @@ private final func ActivateIconicCyberware() {
     }
 
     let isOnlyOneAbility = numberOfAbilities == 1;
-    let isCombinedAbilityMode = IsCombinedAbilityMode();
 
     let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
     let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
@@ -91,14 +90,14 @@ private final func ActivateIconicCyberware() {
     let wasAttempted = false;
     let wasActivated = false;
 
-    if hasOverclock && (isOnlyOneAbility || isFocusMode || isCombinedAbilityMode) {
+    if hasOverclock && !isFocusMode && isOnlyOneAbility {
         wasAttempted = true;
         if QuickHackableHelper.TryToCycleOverclockedState(this) {
             wasActivated = true;
         }
     }
 
-    if hasBerserk && !isFocusMode && (isOnlyOneAbility || ((isBlocking || !hasSandevistan)) || isCombinedAbilityMode) {
+    if hasBerserk && !isFocusMode && (isOnlyOneAbility || isBlocking || !hasSandevistan) {
         if canUseBerserk && !isInVehicle {
             let berserkItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
 
@@ -109,7 +108,7 @@ private final func ActivateIconicCyberware() {
         }
     }
 
-    if hasSandevistan && !isFocusMode && (isOnlyOneAbility || ((!isBlocking || !hasBerserk)) || isCombinedAbilityMode) {
+    if hasSandevistan && !isFocusMode && (isOnlyOneAbility || !isBlocking || !hasBerserk) {
         if canUseSandevistan && TimeDilationHelper.CanUseTimeDilation(this) {
             let sandevistanItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
 

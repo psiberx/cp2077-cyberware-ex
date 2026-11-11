@@ -11,20 +11,41 @@ protected cb func OnGameAttached() -> Bool {
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsumer) -> Bool {
-    if this.PlayerLastUsedPad() && Equals(ListenerAction.GetName(action), n"ToggleSprint")
-        && Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-        let psmBlackboard = this.GetPlayerStateMachineBlackboard();
-        let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
-        if isFocusMode {
-            if QuickHackableHelper.TryToCycleOverclockedState(this) {
-                let dpadAction = new DPADActionPerformed();
-                dpadAction.action = EHotkey.LBRB;
-                dpadAction.state = EUIActionState.COMPLETED;
-                dpadAction.successful = true;
+    if Equals(ListenerAction.GetName(action), n"IconicCyberware") {
+    	if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
+			let equipmentData = EquipmentSystem.GetData(this);
+			let characterData = PlayerDevelopmentSystem.GetData(this);
 
-                GameInstance.GetUISystem(this.GetGame()).QueueEvent(dpadAction);
-            }
+			let hasBerserk = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
+			let hasSandevistan = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
+			let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
+				&& characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
+
+			let numberOfAbilities = (hasBerserk ? 1 : 0) + (hasSandevistan ? 1 : 0) + (hasOverclock ? 1 : 0);
+			if numberOfAbilities > 1 && hasOverclock {
+				this.m_CWMaskInVehicleInputHeld = true;
+			} else {
+				this.ActivateIconicCyberware();
+			}
+
+			return true;
         }
+
+		if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_HOLD_COMPLETE) {
+			this.m_CWMaskInVehicleInputHeld = false;
+			this.ExecuteCWMask();
+
+			return true;
+		}
+
+		if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
+			if this.m_CWMaskInVehicleInputHeld {
+				this.m_CWMaskInVehicleInputHeld = false;
+				this.ActivateIconicCyberware();
+			}
+
+			return true;
+		}
     } else {
         wrappedMethod(action, consumer);
     }
@@ -61,13 +82,13 @@ private final func ActivateIconicCyberware() {
         || Equals(meleeWeaponState, gamePSMMeleeWeapon.Deflect) || Equals(meleeWeaponState, gamePSMMeleeWeapon.DeflectAttack);
     let isInVehicle = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
 
-    let attempted = false;
-    let activated = false;
+    let wasAttempted = false;
+    let wasActivated = false;
 
     if hasOverclock && (isOnlyOneAbility || isFocusMode || isCombinedAbilityMode) {
-        attempted = true;
+        wasAttempted = true;
         if QuickHackableHelper.TryToCycleOverclockedState(this) {
-            activated = true;
+            wasActivated = true;
         }
     }
 
@@ -75,9 +96,9 @@ private final func ActivateIconicCyberware() {
         if canUseBerserk && !isInVehicle {
             let berserkItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
 
-            attempted = true;
+            wasAttempted = true;
             if ItemActionsHelper.UseItem(this, berserkItem) {
-                activated = true;
+                wasActivated = true;
             }
         }
     }
@@ -86,15 +107,15 @@ private final func ActivateIconicCyberware() {
         if canUseSandevistan && TimeDilationHelper.CanUseTimeDilation(this) {
             let sandevistanItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
 
-            attempted = true;
+            wasAttempted = true;
             if ItemActionsHelper.UseItem(this, sandevistanItem) {
-                activated = true;
+                wasActivated = true;
             }
         }
     }
 
-    if attempted {
-        if activated {
+    if wasAttempted {
+        if wasActivated {
             this.IconicCyberwareActivated();
         } else {
             let audioEvent = new SoundPlayEvent();
@@ -106,7 +127,54 @@ private final func ActivateIconicCyberware() {
         let dpadAction = new DPADActionPerformed();
         dpadAction.action = EHotkey.LBRB;
         dpadAction.state = EUIActionState.COMPLETED;
-        dpadAction.successful = activated;
+        dpadAction.successful = wasActivated;
+
+        GameInstance.GetUISystem(this.GetGame()).QueueEvent(dpadAction);
+    }
+}
+
+@replaceMethod(PlayerPuppet)
+private final func ExecuteCWMask() {
+    let equipmentData = EquipmentSystem.GetData(this);
+    let characterData = PlayerDevelopmentSystem.GetData(this);
+
+	let hasMask = this.HasCWMask();
+    let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
+        && characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
+
+    let wasAttempted = false;
+    let wasActivated = false;
+    let isAbility = false;
+
+    if hasOverclock {
+        isAbility = true;
+        wasAttempted = true;
+        if QuickHackableHelper.TryToCycleOverclockedState(this) {
+            wasActivated = true;
+        }
+    }
+
+	if hasMask && !isAbility {
+		wasAttempted = true;
+		wasActivated = ItemActionsHelper.UseItem(this, this.GetCWMaskID());
+	}
+
+    if wasAttempted {
+        if isAbility {
+			if wasActivated {
+				this.IconicCyberwareActivated();
+			} else {
+				let audioEvent = new SoundPlayEvent();
+				audioEvent.soundName = n"ui_grenade_empty";
+
+				this.QueueEvent(audioEvent);
+			}
+        }
+
+        let dpadAction = new DPADActionPerformed();
+		dpadAction.action = isAbility ? EHotkey.LBRB : EHotkey.RB;
+		dpadAction.state = EUIActionState.COMPLETED;
+		dpadAction.successful = wasActivated;
 
         GameInstance.GetUISystem(this.GetGame()).QueueEvent(dpadAction);
     }

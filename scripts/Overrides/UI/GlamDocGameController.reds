@@ -25,14 +25,14 @@ private final func CheckIfCanApply(itemData: wref<gameItemData>) -> Bool {
     if !IsDefined(arm) {
         return false;
     }
-    return this.ItemTagMatch(itemData, IntEnum<ArmsWareType>(EnumInt(arm.GetItemType()) - 15));
+    return this.ItemTagMatch(itemData, IntEnum<ArmsWareType>(EnumInt(arm.GetItemType()) - EnumInt(gamedataItemType.Cyb_Launcher)));
 }
 
 @replaceMethod(GlamDocGameController)
 private final func GetCurrentArmsWareType() -> ArmsWareType {
     let arm = this.GetCurrentArmItem();
     if IsDefined(arm) {
-        return IntEnum<ArmsWareType>(EnumInt(arm.GetItemType()) - 15);
+        return IntEnum<ArmsWareType>(EnumInt(arm.GetItemType()) - EnumInt(gamedataItemType.Cyb_Launcher));
     }
     return ArmsWareType.Launcher;
 }

@@ -9,6 +9,6 @@ span_starts_with = "TweakDBManager"
 message = "Install TweakXL 1.12.1 or higher"
 
 [[UNRESOLVED_REF]]
-id = "CODEWARE_12103"
+id = "CODEWARE_12104"
 span_starts_with = "Codeware"
-message = "Install Codeware 1.21.3 or higher"
+message = "Install Codeware 1.21.4 or higher"

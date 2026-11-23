@@ -17,19 +17,29 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
     	if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_PRESSED) {
 			let equipmentData = EquipmentSystem.GetData(this);
 			let characterData = PlayerDevelopmentSystem.GetData(this);
+		    let psmBlackboard = this.GetPlayerStateMachineBlackboard();
 
 			let hasBerserk = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
 			let hasSandevistan = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
 			let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
 				&& characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
-
 			let numberOfAbilities = (hasBerserk ? 1 : 0) + (hasSandevistan ? 1 : 0) + (hasOverclock ? 1 : 0);
-			if numberOfAbilities > 1 && hasOverclock {
-				this.m_CWMaskInVehicleInputHeld = true;
-			} else {
-				if !isFocusMode {
-					this.ActivateIconicCyberware();
+
+			let hasMask = this.HasCWMask();
+			let isInVehicle = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
+
+			if isInVehicle {
+				if hasMask || hasOverclock {
+					this.m_CWMaskInVehicleInputHeld = true;
 				}
+			} else {
+				if numberOfAbilities > 1 && hasOverclock {
+					this.m_CWMaskInVehicleInputHeld = true;
+				}
+			}
+
+			if !this.m_CWMaskInVehicleInputHeld && !isFocusMode {
+				this.ActivateIconicCyberware();
 			}
 
 			return true;
@@ -43,12 +53,11 @@ protected cb func OnAction(action: ListenerAction, consumer: ListenerActionConsu
 		}
 
 		if Equals(ListenerAction.GetType(action), gameinputActionType.BUTTON_RELEASED) {
-			if this.m_CWMaskInVehicleInputHeld {
-				this.m_CWMaskInVehicleInputHeld = false;
-				if !isFocusMode {
-					this.ActivateIconicCyberware();
-				}
+			if this.m_CWMaskInVehicleInputHeld && !isFocusMode {
+				this.ActivateIconicCyberware();
 			}
+
+			this.m_CWMaskInVehicleInputHeld = false;
 
 			return true;
 		}
@@ -66,21 +75,19 @@ private final func ActivateIconicCyberware() {
     let hasSandevistan = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
     let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
         && characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
-
     let numberOfAbilities = (hasBerserk ? 1 : 0) + (hasSandevistan ? 1 : 0) + (hasOverclock ? 1 : 0);
+
     if numberOfAbilities == 0 {
         return;
     }
 
-    let isOnlyOneAbility = numberOfAbilities == 1;
-
     let statsSystem = GameInstance.GetStatsSystem(this.GetGame());
     let playerStatsId = Cast<StatsObjectID>(this.GetEntityID());
-    let canUseBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
-    let canUseSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
-
     let psmBlackboard = this.GetPlayerStateMachineBlackboard();
     let meleeWeaponState = IntEnum<gamePSMMeleeWeapon>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.MeleeWeapon));
+
+    let canUseBerserk = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasBerserk);
+    let canUseSandevistan = statsSystem.GetStatBoolValue(playerStatsId, gamedataStatType.HasSandevistan);
 
     let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
     let isBlocking = Equals(meleeWeaponState, gamePSMMeleeWeapon.Block) || Equals(meleeWeaponState, gamePSMMeleeWeapon.BlockAttack)
@@ -90,14 +97,14 @@ private final func ActivateIconicCyberware() {
     let wasAttempted = false;
     let wasActivated = false;
 
-    if hasOverclock && !isFocusMode && isOnlyOneAbility {
+    if hasOverclock && !isFocusMode && numberOfAbilities == 1 {
         wasAttempted = true;
         if QuickHackableHelper.TryToCycleOverclockedState(this) {
             wasActivated = true;
         }
     }
 
-    if hasBerserk && !isFocusMode && (isOnlyOneAbility || isBlocking || !hasSandevistan) {
+    if hasBerserk && !isFocusMode && (numberOfAbilities == 1 || isBlocking || !hasSandevistan) {
         if canUseBerserk && !isInVehicle {
             let berserkItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Berserk");
 
@@ -108,7 +115,7 @@ private final func ActivateIconicCyberware() {
         }
     }
 
-    if hasSandevistan && !isFocusMode && (isOnlyOneAbility || !isBlocking || !hasBerserk) {
+    if hasSandevistan && !isFocusMode && (numberOfAbilities == 1 || !isBlocking || !hasBerserk) {
         if canUseSandevistan && TimeDilationHelper.CanUseTimeDilation(this) {
             let sandevistanItem = equipmentData.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
 
@@ -142,16 +149,20 @@ private final func ActivateIconicCyberware() {
 private final func ExecuteCWMask() {
     let equipmentData = EquipmentSystem.GetData(this);
     let characterData = PlayerDevelopmentSystem.GetData(this);
+    let psmBlackboard = this.GetPlayerStateMachineBlackboard();
 
 	let hasMask = this.HasCWMask();
     let hasOverclock = equipmentData.HasTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Cyberdeck")
         && characterData.IsNewPerkBought(gamedataNewPerkType.Intelligence_Central_Milestone_3) == 3;
 
+    let isFocusMode = Equals(IntEnum<gamePSMVision>(psmBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision)), gamePSMVision.Focus);
+    let isInVehicle = psmBlackboard.GetBool(GetAllBlackboardDefs().PlayerStateMachine.MountedToVehicle);
+
     let wasAttempted = false;
     let wasActivated = false;
     let isAbility = false;
 
-    if hasOverclock {
+    if hasOverclock && (!isInVehicle || !hasMask || isFocusMode) {
         isAbility = true;
         wasAttempted = true;
         if QuickHackableHelper.TryToCycleOverclockedState(this) {
@@ -159,7 +170,7 @@ private final func ExecuteCWMask() {
         }
     }
 
-	if hasMask && !isAbility {
+	if hasMask && isInVehicle && !isAbility {
 		wasAttempted = true;
 		wasActivated = ItemActionsHelper.UseItem(this, this.GetCWMaskID());
 	}
